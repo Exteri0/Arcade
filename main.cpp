@@ -19,6 +19,6 @@ int main()
         window.draw(shape);
         window.display();
     }
-    // Myron's Comment to test2223
+    // Myron's Comment to test
     return 0;
 }

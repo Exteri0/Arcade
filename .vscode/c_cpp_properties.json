@@ -5,9 +5,9 @@
       "includePath": [
         "${workspaceFolder}/**",
         "src/include",
-        "C:/msys64/mingw64/include/GL"
+        "C:\\Mysys2install\\mingw64\\include\\GL"
       ],
-      "compilerPath": "C:/msys64/mingw64/bin/gcc.exe",
+      "compilerPath": "C:\\Mysys2install\\mingw64\\bin\\gcc.exe",
       "cStandard": "${default}",
       "cppStandard": "${default}",
       "intelliSenseMode": "windows-gcc-x64",

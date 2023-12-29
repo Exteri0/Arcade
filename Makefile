@@ -1,4 +1,4 @@
-all: clean compile link
+all: clean compile link start
 
 compile:
 	g++ -c main.cpp -I"src/include" -DSFML_STATIC

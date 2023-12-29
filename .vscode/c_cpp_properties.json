@@ -2,7 +2,11 @@
   "configurations": [
     {
       "name": "windows-gcc-x64",
-      "includePath": ["${workspaceFolder}/**", "src/include"],
+      "includePath": [
+        "${workspaceFolder}/**",
+        "src/include",
+        "C:/msys64/mingw64/include/GL"
+      ],
       "compilerPath": "C:/msys64/mingw64/bin/gcc.exe",
       "cStandard": "${default}",
       "cppStandard": "${default}",

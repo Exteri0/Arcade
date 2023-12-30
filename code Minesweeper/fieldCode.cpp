@@ -158,43 +158,42 @@ void minesweeperField::openCell(unsigned char xInput, unsigned char yInput)
             else
             {
                 // Otherwise, we set the mine
-                get_cell(mine_x, mine_y, cells)->set_mine();
+                get_cell(xCoordMine, yCoordMine, cells)->setMine();
             }
         }
 
         // After we generate mines, each cell counts how many mines are surrounding it
         for (Cell &cell : cells)
         {
-            cell.count_mines_around(cells);
+            cell.countMines(cells);
         }
     }
 
     // We don't open the cell when the game is over or when the cell is flagged
-    if (0 == gameEnd && 0 == get_cell(i_x, i_y, cells)->get_is_flagged())
+    if (!gameEnd && !get_cell(xInput, yInput, cells)->getFlag())
     {
-        if (1 == get_cell(i_x, i_y, cells)->open(cells))
+        if (!get_cell(xInput, yInput, cells)->open(cells))
         {
             // When the player opens a cell with a mine, we set the game over to -1
             gameEnd = -1;
         }
         else
         {
-            unsigned short total_closed_cells = 0;
+            unsigned short closedCellCount = 0;
 
             // We count how many cells are closed
             for (Cell &cell : cells)
             {
-                total_closed_cells += 1 - cell.get_is_open();
+                closedCellCount += 1 - cell.getOpen();
             }
 
             // If the number of closed cells equals the total number of mines, we'll consider that the game is won
-            if (MINES == total_closed_cells)
+            if (numMines == closedCellCount)
             {
                 // We set the game over to 1
                 gameEnd = 1;
 
                 // Then we start the effect
-                get_cell(i_x, i_y, cells)->set_effect_timer(EFFECT_DURATION - 1);
             }
         }
     }
@@ -205,7 +204,7 @@ void minesweeperField::restart()
     // We only restart the game when it's over
     if (0 != gameEnd)
     {
-        first_click = 0;
+        gameStart = 0;
 
         gameEnd = 0;
 
@@ -217,7 +216,7 @@ void minesweeperField::restart()
 }
 
 // Since we can't call the cell's function directly, we must use this function
-void minesweeperField::set_mouse_state(unsigned char i_mouse_state, unsigned char i_x, unsigned char i_y)
+void minesweeperField::setMouseState(unsigned char currMouseState, unsigned char xInput, unsigned char yInput)
 {
-    get_cell(i_x, i_y, cells)->set_mouse_state(i_mouse_state);
+    get_cell(xInput, yInput, cells)->setMouseHover(currMouseState);
 }

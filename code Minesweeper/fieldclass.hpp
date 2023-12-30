@@ -26,5 +26,5 @@ public:
     void flagCell(unsigned char xInput, unsigned char yInput);
     void openCell(unsigned char xInput, unsigned char yInput);
     void restart();
-    void setMouseState(unsigned char i_mouse_state, unsigned char i_x, unsigned char i_y);
+    void setMouseState(unsigned char currMouseState, unsigned char xInput, unsigned char yInput);
 };

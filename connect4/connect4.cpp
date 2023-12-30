@@ -1,18 +1,7 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
-
-//////////////////////////////////////////////////
-//////////////////////////////////////////////////
-
+        
 enum Tile {NONE, RED, YELLOW};
-
-//////////////////////////////////////////////////
-//////////////////////////////////////////////////
-
-// Classes
-
-//////////////////////////////////////////////////
-//////////////////////////////////////////////////
 
 // Functions
 
@@ -109,14 +98,16 @@ int dropLocation(Tile *grid, int column)
     return -1;
 }
 
-//////////////////////////////////////////////////
-//////////////////////////////////////////////////
 
 int main()
 {
+    // This sets firstly the settings which creats the tab, and the tab is called Connect 4
+
     sf::ContextSettings settings;
     settings.antialiasingLevel = 8;
     sf::RenderWindow window(sf::VideoMode(800, 630), "Connect 4", sf::Style::Close, settings);
+
+    // This is importing the font  and checking if it is there or not
 
     sf::Font font;
     if (!font.loadFromFile("andlso.ttf"))
@@ -124,45 +115,39 @@ int main()
         std::cout << "Failed to load resources.\n\n";
         return 0;
     }
-
-    sf::RectangleShape background(sf::Vector2f(800, 630));
-    background.setFillColor(sf::Color(138,138,138));
-
-    sf::RectangleShape overlay(sf::Vector2f(630, 630));
-    overlay.setFillColor(sf::Color(150, 150, 150, 150));
     sf::Text ggText;
     ggText.setFont(font);
     ggText.setCharacterSize(80);
     ggText.setColor(sf::Color::Black);
+    
+    // Creates the background with the same size of the window and colors it Gray
+
+    sf::RectangleShape background(sf::Vector2f(800, 630));
+    background.setFillColor(sf::Color(138,138,138));
+    
+    // We create a board that is 630x630 leaving 
 
     sf::RectangleShape board(sf::Vector2f(630, 630));
     board.setFillColor(sf::Color(50, 50, 255));
     board.setOutlineColor(sf::Color::Black);
     board.setOutlineThickness(5);
 
-    sf::RectangleShape skipButton(sf::Vector2f(150, 50));
-    skipButton.setFillColor(sf::Color(255, 150, 0));
-    skipButton.setPosition(649, 579);
-    skipButton.setOutlineColor(sf::Color::Black);
-    skipButton.setOutlineThickness(1);
-    sf::Text skipText;
-    skipText.setFont(font);
-    skipText.setString("Skip Turn");
-    skipText.setCharacterSize(35);
-    skipText.setColor(sf::Color::Black);
-    skipText.setPosition(655, 582);
+    // Restart yellow box positioned in the middle of the remaining area (This box will also act as a button) 
 
     sf::RectangleShape restart(sf::Vector2f(150, 50));
     restart.setFillColor(sf::Color(255, 150, 0));
-    restart.setPosition(649, 1);
+    restart.setPosition(640, 300);
     restart.setOutlineColor(sf::Color::Black);
     restart.setOutlineThickness(1);
+
+    // Restart text positioned inside the box
+
     sf::Text restartText;
     restartText.setFont(font);
     restartText.setString("Restart");
     restartText.setCharacterSize(35);
     restartText.setColor(sf::Color::Black);
-    restartText.setPosition(675, 2);
+    restartText.setPosition(664, 304);
 
     sf::CircleShape circle;
     circle.setRadius(38);
@@ -179,8 +164,6 @@ int main()
     int column = 0, newTile = 0, hoverTile = 0, moveCounter = 0;
     Tile winner = NONE;
 
-    //////////////////////////////////////////////////
-    //////////////////////////////////////////////////
 
     while (window.isOpen())
     {
@@ -196,10 +179,6 @@ int main()
                     tileDropped = true;
                     column = event.mouseButton.x / 90;
                 }
-                else if (skipButton.getGlobalBounds().contains(event.mouseButton.x, event.mouseButton.y) && !gameOver)
-                {
-                    currentRed = !currentRed;
-                }
                 else if (restart.getGlobalBounds().contains(event.mouseButton.x, event.mouseButton.y))
                 {
                     for (int i = 0; i < 49; i++)
@@ -212,9 +191,6 @@ int main()
                 }
             }
         }
-
-        //////////////////////////////////////////////////
-        //////////////////////////////////////////////////
 
         if (tileDropped)
         {
@@ -239,9 +215,6 @@ int main()
                 }
             }
         }
-
-        //////////////////////////////////////////////////
-        //////////////////////////////////////////////////
 
         window.clear();
 
@@ -278,33 +251,24 @@ int main()
         {
             if (winner == RED)
             {
-                overlay.setFillColor(sf::Color(255, 0, 0, 150));
+                background.setFillColor(sf::Color(255, 0, 0, 150));
                 ggText.setString("Red Wins!");
                 ggText.setPosition(150, 260);
             }
             else if (winner == YELLOW)
             {
-                overlay.setFillColor(sf::Color(255, 255, 0, 150));
+                background.setFillColor(sf::Color(255, 255, 0, 150));
                 ggText.setString("Yellow Wins!");
                 ggText.setPosition(90, 260);
             }
             else
             {
-                overlay.setFillColor(sf::Color(150, 150, 150, 150));
+                background.setFillColor(sf::Color(150, 150, 150, 150));
                 ggText.setString("Draw!");
                 ggText.setPosition(180, 260);
             }
-            window.draw(overlay);
+            window.draw(background);
             window.draw(ggText);
-        }
-        else
-        {
-            if (skipButton.getGlobalBounds().contains(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y))
-                skipButton.setFillColor(sf::Color(255, 200, 0));
-            else
-                skipButton.setFillColor(sf::Color(255, 150, 0));
-            window.draw(skipButton);
-            window.draw(skipText);
         }
 
         if (restart.getGlobalBounds().contains(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y))
@@ -316,9 +280,6 @@ int main()
 
         window.display();
     }
-
-    //////////////////////////////////////////////////
-    //////////////////////////////////////////////////
 
     return 0;
 }

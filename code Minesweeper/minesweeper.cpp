@@ -1,24 +1,16 @@
 #include <SFML/Graphics.hpp>
+#include <bits/stdc++.h>
+#include "constants.hpp"
+
+using namespace sf;
 
 int main()
 {
-    sf::RenderWindow window(sf::VideoMode(200, 200), "SFML works!");
-    sf::CircleShape shape(100.f);
-    shape.setFillColor(sf::Color::Green);
+    unsigned lag = 0; //In order to allow the game regardless of frames per second
+    std::chrono::time_point<std::chrono::steady_clock> previous_time; //another lag reduction method.
+    Event event;
+    RenderWindow gameWindow(VideoMode(cellSize * columns * screenResize, screenResize * (fontHeight + cellSize * columns)), "MinesweeperGame", Style::Close);
+    gameWindow.setView(View(FloatRect(0, 0, cellSize * columns, fontHeight + cellSize * rows)));
+     Fieldobj;
 
-    while (window.isOpen())
-    {
-        sf::Event event;
-        while (window.pollEvent(event))
-        {
-            if (event.type == sf::Event::Closed)
-                window.close();
-        }
-
-        window.clear();
-        window.draw(shape);
-        window.display();
-    }
-    // Myron's Comment to test
-    return 0;
 }

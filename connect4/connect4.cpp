@@ -1,5 +1,8 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
+#include <chrono>
+#include <thread>
+
         
 enum Tile {NONE, RED, YELLOW};
 
@@ -98,6 +101,27 @@ int dropLocation(Tile *grid, int column)
     return -1;
 }
 
+int dropRandomLocation(Tile *grid)
+{
+    int i = 6,column = rand()%8;
+    do
+    {
+        if (grid[column + 7*i] == NONE)
+            return column + 7*i;
+        i--;
+    } while (i >= 0);
+
+    return -1;
+}
+
+int scorepos(Tile *grid, int turn){
+    // Horizontal scoring
+    
+    
+    
+    return 1;
+}
+
 
 int main()
 {
@@ -160,61 +184,15 @@ int main()
     for (int i = 0; i < 49; i++)
         grid[i] = NONE;
 
-    bool gameOver = false, tileDropped = false, currentRed = true;
+    bool gameOver = false, tileDropped = rand() % 2, currentRed = rand() % 2; // If currentRed is changed then the color changes
     int column = 0, newTile = 0, hoverTile = 0, moveCounter = 0;
     Tile winner = NONE;
 
 
     while (window.isOpen())
     {
-        sf::Event event;
-        while (window.pollEvent(event))
-        {
-            if (event.type == sf::Event::Closed)
-                window.close();
-            if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left)
-            {
-                if (event.mouseButton.x < 630 && !gameOver)
-                {
-                    tileDropped = true;
-                    column = event.mouseButton.x / 90;
-                }
-                else if (restart.getGlobalBounds().contains(event.mouseButton.x, event.mouseButton.y))
-                {
-                    for (int i = 0; i < 49; i++)
-                        grid[i] = NONE;
-                    gameOver = false;
-                    tileDropped = false;
-                    currentRed = true;
-                    moveCounter = 0;
-                    winner = NONE;
-                }
-            }
-        }
 
-        if (tileDropped)
-        {
-            tileDropped = false;
-            newTile = dropLocation(grid, column);
-            if (newTile != -1)
-            {
-                grid[newTile] = static_cast<Tile>(2 - currentRed);
-                currentRed = !currentRed;
-                tileDropped = false;
-                moveCounter++;
-
-                if (moveCounter >= 49)
-                {
-                    gameOver = true;
-                    winner = NONE;
-                }
-                else if (victoryCheck(grid, newTile))
-                {
-                    gameOver = true;
-                    winner = grid[newTile];
-                }
-            }
-        }
+        // This clears the window and redraws the new board 
 
         window.clear();
 
@@ -233,6 +211,8 @@ int main()
             window.draw(circle);
         }
 
+        // Colors the tile on the boards
+
         if (sf::Mouse::getPosition(window).x < 630)
         {
             hoverTile = dropLocation(grid, sf::Mouse::getPosition(window).x / 90);
@@ -246,6 +226,8 @@ int main()
                 window.draw(circle);
             }
         }
+
+        // Gameover messages and restarting
 
         if (gameOver)
         {
@@ -279,6 +261,92 @@ int main()
         window.draw(restartText);
 
         window.display();
+
+        // This part is not important to understand
+        // All it does is that it tracks whenever the mouse is button is pressed as an event, and it has 3 cases. 
+        // First is that if the window is closed (exited)
+        // Second is that if a tile is dropped
+        // Third is that when the player clicks restart it resets the grid and starts the game over
+
+        sf::Event event;
+        while (window.pollEvent(event))
+        {
+            if (event.type == sf::Event::Closed)
+                window.close();
+            if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Left)
+            {
+                if (event.mouseButton.x < 630 && !gameOver)
+                {
+                    tileDropped = true;
+                    column = event.mouseButton.x / 90;
+                }
+                else if (restart.getGlobalBounds().contains(event.mouseButton.x, event.mouseButton.y))
+                {
+                    for (int i = 0; i < 49; i++)
+                        grid[i] = NONE;
+                    gameOver = false;
+                    tileDropped = rand() % 2;
+                    currentRed = rand() % 2;
+                    moveCounter = 0;
+                    winner = NONE;
+                    column = 0;
+                }
+            }
+        }
+
+        ////////////////////////////////////
+
+        if (tileDropped)
+        {
+            tileDropped = false;
+            if (column == 0){
+                newTile = dropRandomLocation(grid);
+                grid[newTile] = static_cast<Tile>(2-currentRed);
+                currentRed = !currentRed;
+                moveCounter++;
+            }
+            else {
+                newTile = dropLocation(grid, column);
+                if (newTile != -1)
+                {
+                    grid[newTile] = static_cast<Tile>(2 - currentRed);
+                    currentRed = !currentRed;
+                    moveCounter++;
+
+                    if (moveCounter >= 49)
+                    {
+                        gameOver = true;
+                        winner = NONE;
+                    }
+                    else if (victoryCheck(grid, newTile))
+                    {
+                        gameOver = true;
+                        winner = grid[newTile];
+                    }
+
+                    std::this_thread::sleep_until(std::chrono::system_clock::now() + std::chrono::milliseconds(300));
+
+                    newTile = dropRandomLocation(grid);
+                    grid[newTile] = static_cast<Tile>(2-currentRed);
+                    currentRed = !currentRed;
+                    moveCounter++;
+
+                    if (moveCounter >= 49)
+                    {
+                        gameOver = true;
+                        winner = NONE;
+                    }
+                    else if (victoryCheck(grid, newTile))
+                    {
+                        gameOver = true;
+                        winner = grid[newTile];
+                    }
+                }
+            }
+        }
+
+        
+
     }
 
     return 0;

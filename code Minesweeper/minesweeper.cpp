@@ -1,8 +1,6 @@
 #include <SFML/Graphics.hpp>
 #include <bits/stdc++.h>
-#include "constants.hpp"
 #include "fieldCode.cpp"
-#include "cellCode.cpp"
 
 using namespace sf;
 using namespace std;

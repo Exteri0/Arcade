@@ -1,6 +1,6 @@
 #include<SFML/Graphics.hpp>
 #include <bits/stdc++.h>
-#include <cellHeader.hpp>
+#include "cellCode.cpp"
 using namespace std;
 
 class minesweeperField

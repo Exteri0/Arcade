@@ -6,7 +6,11 @@ using namespace std;
 #include "cellHeader.hpp"
 #include "constants.hpp"
 
-Cell *get_cell(unsigned char i_x, unsigned char i_y, std::vector<Cell> &i_cells);
+Cell *get_cell(unsigned char xInput, unsigned char yInput, std::vector<Cell> &cells);
+Cell *get_cell(unsigned char xInput, unsigned char yInput, std::vector<Cell> &cells)
+{
+    return &cells[xInput + columns * yInput];
+}
 
 Cell::Cell(unsigned char xInput, unsigned char yInput) : mined(0),
                                                    xIndex(xInput),

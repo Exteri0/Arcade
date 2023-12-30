@@ -4,8 +4,8 @@
 #include "fieldclass.hpp"
 #include "cellCode.cpp"
 #include "graphicalcode.cpp"
-
-
+using namespace std;
+using namespace sf;
 
 minesweeperField::minesweeperField() : gameEnd(1), random_engine(random_device())
 {
@@ -23,57 +23,39 @@ minesweeperField::minesweeperField() : gameEnd(1), random_engine(random_device()
     restart();
 }
 
-bool minesweeperField::effect_over()
-{
-    // We check every cell's effect timer
-    for (Cell &cell : cells)
-    {
-        // If any cell's effect timer is not over yet
-        if (0 < cell.get_effect_timer())
-        {
-            // We return 0
-            return 0;
-        }
-    }
-
-    // Otherwise, we return 1 (Do I really have to write this? I mean, I know people aren't stupid, but I still feel like I have to explain it)
-    return 1;
-}
-
-char minesweeperField::get_game_over()
+char minesweeperField::endGame()
 {
     // I'm not even gonna explain this
     return gameEnd;
 }
 
-unsigned short minesweeperField::get_flags()
+unsigned short minesweeperField::getFlags()
 {
     // We just count the total number of flagged cells
-    unsigned short total_flags = 0;
+    unsigned short flagCount = 0;
 
-    for (Cell &cell : cells)
+    for (Cell cell : cells)
     {
-        total_flags += cell.get_is_flagged();
+        flagCount += cell.getFlag();
     }
 
     // And we return the result
-    return total_flags;
+    return flagCount;
 }
 
 // I'm too lazy to write comments for this function
 // IT'S SOOOOOOOO LOOOOOOOOONG!!!!!!!!
-void minesweeperField::draw(sf::RenderWindow &i_window)
+void minesweeperField::draw(sf::RenderWindow &targetWindow)
 {
     // We'll use this to draw cells
-    sf::RectangleShape cell_shape(sf::Vector2f(CELL_SIZE - 1, CELL_SIZE - 1));
+    RectangleShape cellBox(sf::Vector2f(cellSize - 1, cellSize - 1));
 
-    // The one thing I hate about SFML is that in order to draw an image, I have to make 2 objects
-    sf::Sprite icon_sprite;
+    Sprite pictureSprite;
+    Texture pictureTexture;
 
-    sf::Texture icons_texture;
-    icons_texture.loadFromFile("Resources/Images/Icons" + std::to_string(CELL_SIZE) + ".png");
+    pictureTexture.loadFromFile("Icons16.png");
 
-    icon_sprite.setTexture(icons_texture);
+    pictureSprite.setTexture(pictureTexture);
 
     // We loop through each cell
     for (unsigned char a = 0; a < columns; a++)
@@ -81,154 +63,96 @@ void minesweeperField::draw(sf::RenderWindow &i_window)
         for (unsigned char b = 0; b < rows; b++)
         {
             // We change the position of the cell shape
-            cell_shape.setPosition(static_cast<float>(CELL_SIZE * a), static_cast<float>(CELL_SIZE * b));
+            cellBox.setPosition(static_cast<float>(cellSize * a), static_cast<float>(cellSize * b));
 
             // If the current cell is open
-            if (1 == get_cell(a, b, cells)->get_is_open())
+            if (get_cell(a, b, cells)->getOpen())
             {
                 // We get the number of mines surrounding it
-                unsigned char mines_around = get_cell(a, b, cells)->get_mines_around();
+                unsigned char mineCount = get_cell(a, b, cells)->getMineCount();
 
-                cell_shape.setFillColor(sf::Color(146, 182, 255));
+                cellBox.setFillColor(Color(232, 232, 232));
 
                 // We draw the cell (Wow, what a surprise!)
-                i_window.draw(cell_shape);
+                targetWindow.draw(cellBox);
 
                 // If the cell has at least one mine around it
-                if (0 < mines_around)
+                if (mineCount > 0)
                 {
                     // We take the number from the icons' texture and draw it
-                    icon_sprite.setPosition(static_cast<float>(CELL_SIZE * a), static_cast<float>(CELL_SIZE * b));
-                    icon_sprite.setTextureRect(sf::IntRect(CELL_SIZE * mines_around, 0, CELL_SIZE, CELL_SIZE));
+                    pictureSprite.setPosition(static_cast<float>(cellSize * a), static_cast<float>(cellSize * b));
+                    pictureSprite.setTextureRect(IntRect(cellSize * mineCount, 0, cellSize, cellSize));
 
-                    i_window.draw(icon_sprite);
+                    targetWindow.draw(pictureSprite);
                 }
             }
             else // If the cell is closed
             {
-                cell_shape.setFillColor(sf::Color(0, 73, 255));
+                cellBox.setFillColor(Color(246, 124, 18));
 
                 // We set the cell's color based on the mouse state
                 // We also don't change it's color if the game is over
-                if (0 == gameEnd)
+                if (!gameEnd)
                 {
-                    if (1 == get_cell(a, b, cells)->get_mouse_state())
+                    if (get_cell(a, b, cells)->getMouseHover() == 1)
                     {
-                        cell_shape.setFillColor(sf::Color(36, 109, 255));
+                        cellBox.setFillColor(Color(255, 173, 100));
                     }
-                    else if (2 == get_cell(a, b, cells)->get_mouse_state())
+                    else if ( get_cell(a, b, cells)->getMouseHover() == 2)
                     {
-                        cell_shape.setFillColor(sf::Color(0, 36, 255));
+                        cellBox.setFillColor(Color(255, 60, 100));
                     }
                 }
 
-                i_window.draw(cell_shape);
+                targetWindow.draw(cellBox);
 
                 // If the cell is flagged
-                if (1 == get_cell(a, b, cells)->get_is_flagged())
+                if (get_cell(a, b, cells)->getFlag())
                 {
                     // We take the flag image and draw it
-                    icon_sprite.setPosition(static_cast<float>(CELL_SIZE * a), static_cast<float>(CELL_SIZE * b));
-                    icon_sprite.setTextureRect(sf::IntRect(0, 0, CELL_SIZE, CELL_SIZE));
+                    pictureSprite.setPosition(static_cast<float>(cellSize * a), static_cast<float>(cellSize * b));
+                    pictureSprite.setTextureRect(IntRect(0, 0, cellSize, cellSize));
 
-                    i_window.draw(icon_sprite);
+                    targetWindow.draw(pictureSprite);
                 }
             }
 
             // Reset the cell's mouse state
-            get_cell(a, b, cells)->set_mouse_state(0);
+            get_cell(a, b, cells)->setMouseHover(0);
 
-            // This is where we draw the effect
-            // Get ready to see messy, horrible, unoptimized code
-            // I warned you
-            // We don't draw the effect if the game is not over or the cell effect timer hasn't yet started.
-            if (0 != gameEnd && EFFECT_DURATION > get_cell(a, b, cells)->get_effect_timer())
-            {
-                // We calculate the size of the effect
-                unsigned char effect_size = static_cast<unsigned char>(2 * round(0.5f * CELL_SIZE * ((EFFECT_DURATION - get_cell(a, b, cells)->get_effect_timer()) / static_cast<float>(EFFECT_DURATION))));
-
-                // The effect timer of each cell will have a random duration
-                std::uniform_int_distribution<unsigned short> effect_duration_distribution(1, EFFECT_DURATION - 1);
-
-                // We're gonna use the cell shape to draw effects, because I love recycling!
-                cell_shape.setPosition(floor(CELL_SIZE * (0.5f + a) - 0.5f * effect_size), floor(CELL_SIZE * (0.5f + b) - 0.5f * effect_size));
-                cell_shape.setSize(sf::Vector2f(effect_size, effect_size));
-
-                // The color of the effect will depend on whether the game is lost or won
-                if (-1 == gameEnd)
-                {
-                    cell_shape.setFillColor(sf::Color(255, 36, 0));
-                }
-                else
-                {
-                    cell_shape.setFillColor(sf::Color(255, 255, 255));
-                }
-
-                // We draw the effect
-                i_window.draw(cell_shape);
-
-                // We reset the cell shape's size
-                cell_shape.setSize(sf::Vector2f(CELL_SIZE - 1, CELL_SIZE - 1));
-
-                // If the effect timer is over
-                if (1 == get_cell(a, b, cells)->update_effect_timer())
-                {
-                    // We start each neighboring cell's effect timer
-                    if (0 <= a - 1 && EFFECT_DURATION == get_cell(a - 1, b, cells)->get_effect_timer())
-                    {
-                        get_cell(a - 1, b, cells)->set_effect_timer(static_cast<unsigned char>(effect_duration_distribution(random_engine)));
-                    }
-
-                    if (0 <= b - 1 && EFFECT_DURATION == get_cell(a, b - 1, cells)->get_effect_timer())
-                    {
-                        get_cell(a, b - 1, cells)->set_effect_timer(static_cast<unsigned char>(effect_duration_distribution(random_engine)));
-                    }
-
-                    if (columns > 1 + a && EFFECT_DURATION == get_cell(1 + a, b, cells)->get_effect_timer())
-                    {
-                        get_cell(1 + a, b, cells)->set_effect_timer(static_cast<unsigned char>(effect_duration_distribution(random_engine)));
-                    }
-
-                    if (rows > 1 + b && EFFECT_DURATION == get_cell(a, 1 + b, cells)->get_effect_timer())
-                    {
-                        get_cell(a, 1 + b, cells)->set_effect_timer(static_cast<unsigned char>(effect_duration_distribution(random_engine)));
-                    }
-                }
-            }
         }
     }
 }
 
-void minesweeperField::flag_cell(unsigned char i_x, unsigned char i_y)
+void minesweeperField::flagCell(unsigned char xInput, unsigned char yInput)
 {
     // We don't let the player to flag cells when the game is over
-    if (0 == gameEnd)
+    if (!gameEnd)
     {
-        get_cell(i_x, i_y, cells)->flag();
+        get_cell(xInput, yInput, cells)->flag();
     }
 }
 
-void minesweeperField::open_cell(unsigned char i_x, unsigned char i_y)
+void minesweeperField::openCell(unsigned char xInput, unsigned char yInput)
 {
     // If this is the first cell we're opening
-    if (0 == first_click)
+    if (!gameStart)
     {
         // We declare coordinate distributions
-        std::uniform_int_distribution<unsigned short> x_distribution(0, columns - 1);
-        std::uniform_int_distribution<unsigned short> y_distribution(0, rows - 1);
+        uniform_int_distribution<unsigned short> xDistribution(0, columns - 1);
+        uniform_int_distribution<unsigned short> yDistribution(0, rows - 1);
 
-        first_click = 1;
+        gameStart = 1;
 
         // Then we generate mines
-        for (unsigned short a = 0; a < MINES; a++)
+        for (unsigned short a = 0; a < numMines; a++)
         {
-            unsigned char mine_x = static_cast<unsigned char>(x_distribution(random_engine));
-            unsigned char mine_y = static_cast<unsigned char>(y_distribution(random_engine));
+            unsigned char xCoordMine = static_cast<unsigned char>(xDistribution(random_engine));
+            unsigned char yCoordMine = static_cast<unsigned char>(yDistribution(random_engine));
 
             // If the chosed cell already has a mine in it or it's a cell that the player wants to open
-            if (1 == get_cell(mine_x, mine_y, cells)->get_is_mine() || (i_x == mine_x && i_y == mine_y))
+            if (get_cell(xCoordMine, yCoordMine, cells)->checkMine() || (xInput == xCoordMine && yInput == yCoordMine))
             {
-                // We try again
                 a--;
             }
             else

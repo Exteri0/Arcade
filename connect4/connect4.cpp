@@ -149,24 +149,33 @@ int main()
     restartText.setColor(sf::Color::Black);
     restartText.setPosition(664, 304);
 
+    // Makes the circles that will carve out the board
+
     sf::CircleShape circle;
     circle.setRadius(38);
     circle.setPointCount(300);
     circle.setOutlineThickness(-3);
     circle.setOutlineColor(sf::Color::Black);
 
+    // Creates the 7*7 grid made of Tiles which can be None (the user did not put a token), Red token or yellow token
     Tile grid[49];
 
     for (int i = 0; i < 49; i++)
-        grid[i] = NONE;
+        grid[i] = NONE; // Assign it all None at the beginning
 
     bool gameOver = false, tileDropped = false, currentRed = true;
     int column = 0, newTile = 0, hoverTile = 0, moveCounter = 0;
     Tile winner = NONE;
 
-
+    // This is the loop that occurs while the window is opened
     while (window.isOpen())
     {
+        // This part is not important to understand
+        // All it does is that it tracks whenever the mouse is button is pressed as an event, and it has 3 cases. 
+        // First is that if the window is closed (exited)
+        // Second is that if a tile is dropped
+        // Third is that when the player clicks restart it resets the grid and starts the game over
+
         sf::Event event;
         while (window.pollEvent(event))
         {
@@ -191,6 +200,8 @@ int main()
                 }
             }
         }
+
+        
 
         if (tileDropped)
         {

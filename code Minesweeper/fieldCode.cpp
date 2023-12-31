@@ -1,10 +1,12 @@
 #include <bits/stdc++.h>
 #include <SFML/Graphics.hpp>
+#include <cstdlib>
+#include <time.h>
 #include "fieldclass.hpp"
 #include "graphicalcode.cpp"
 using namespace std;
 using namespace sf;
-minesweeperField::minesweeperField() : gameEnd(1)
+minesweeperField::minesweeperField() : gameEnd(0), gameStart(false)
 {
     // Here we're adding cells to the cells vector
     for (unsigned char a = 0; a < rows; a++)
@@ -45,12 +47,12 @@ unsigned short minesweeperField::getFlags()
 void minesweeperField::draw(sf::RenderWindow &targetWindow)
 {
     // We'll use this to draw cells
-    RectangleShape cellBox(sf::Vector2f(cellSize - 1, cellSize - 1));
+    RectangleShape cellBox(Vector2f(cellSize - 1, cellSize - 1));
 
     Sprite pictureSprite;
     Texture pictureTexture;
 
-    pictureTexture.loadFromFile("Icons16.png");
+    pictureTexture.loadFromFile("Icons8.png");
 
     pictureSprite.setTexture(pictureTexture);
 
@@ -136,12 +138,12 @@ void minesweeperField::openCell(unsigned char xInput, unsigned char yInput)
     if (!gameStart)
     {
 
-        gameStart = 1;
+        gameStart = true;
 
         // Then we generate mines
         for (unsigned short a = 0; a < numMines; a++)
         {
-            srand(time(NULL));
+            srand(time(0));
             unsigned char xCoordMine = (rand() % columns);
             unsigned char yCoordMine = (rand() % rows);
 
@@ -179,7 +181,9 @@ void minesweeperField::openCell(unsigned char xInput, unsigned char yInput)
             // We count how many cells are closed
             for (Cell &cell : cells)
             {
-                closedCellCount += 1 - cell.getOpen();
+                if(!cell.getOpen()){
+                    closedCellCount++;
+                }
             }
 
             // If the number of closed cells equals the total number of mines, we'll consider that the game is won

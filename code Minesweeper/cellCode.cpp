@@ -49,7 +49,7 @@ bool Cell::open(vector<Cell> &cells)
         opened = true;
 
         // If there are no mines in this cell and the cells around it, WE OPEN THEM ALL!
-        if (!mined && !count)
+        if (!mined && count == 0)
         {
             for (char a = -1; a < 2; a++)
             {
@@ -70,7 +70,7 @@ bool Cell::open(vector<Cell> &cells)
     }
 
     // Return the number between -2573 and 8752
-    return 0;
+    return true;
 }
 
 unsigned char Cell::getMineCount()

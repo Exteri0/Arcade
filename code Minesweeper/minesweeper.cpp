@@ -47,13 +47,16 @@ int main()
                 }
                 else if (event.type == Event::MouseButtonReleased)
                 {
-                    if (event.MouseButtonReleased == Mouse::Left)
+                    switch (event.mouseButton.button)
+                    {
+                    case Mouse::Left:
                     {
                         gameObj.openCell(xIndexMouse, yIndexMouse);
                     }
-                    else if (event.MouseButtonReleased == Mouse::Right)
+                    case Mouse::Right:
                     {
                         gameObj.flagCell(xIndexMouse, yIndexMouse);
+                    }
                     }
                 }
             }
@@ -63,7 +66,7 @@ int main()
             }
             else
             {
-                gameObj.setMouseState(2, xIndexMouse, yIndexMouse);
+                gameObj.setMouseState(1, xIndexMouse, yIndexMouse);
             }
             if (frameTime > lag)
             {

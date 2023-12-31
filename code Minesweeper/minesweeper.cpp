@@ -7,8 +7,8 @@ using namespace std;
 
 int main()
 {
-    unsigned lag = 0; //In order to allow the game regardless of frames per second
-    chrono::time_point<chrono::steady_clock> previous_time; //another lag reduction method requires this variable.
+    unsigned lag = 0;                                       // In order to allow the game regardless of frames per second
+    chrono::time_point<chrono::steady_clock> previous_time; // another lag reduction method requires this variable.
     Event event;
     RenderWindow gameWindow(VideoMode(cellSize * columns * screenResize, screenResize * (fontHeight + cellSize * columns)), "MinesweeperGame", Style::Close);
     gameWindow.setView(View(FloatRect(0, 0, cellSize * columns, fontHeight + cellSize * rows)));
@@ -25,21 +25,57 @@ int main()
         previous_time += chrono::microseconds(delta_time);
 
         // While the lag exceeds the maximum allowed frame duration
-        while (frameTime <= lag){
+        while (frameTime <= lag)
+        {
             unsigned char xIndexMouse, yIndexMouse;
             xIndexMouse = clamp(static_cast<int>(floor(Mouse::getPosition(gameWindow).x / static_cast<float>(cellSize * screenResize))), 0, columns - 1);
             yIndexMouse = clamp(static_cast<int>(floor(Mouse::getPosition(gameWindow).y / static_cast<float>(cellSize * screenResize))), 0, rows - 1);
             lag -= frameTime;
-            while(gameWindow.pollEvent(event)){
-                if(event.type == Event::Closed ){
+            while (gameWindow.pollEvent(event))
+            {
+                if (event.type == Event::Closed)
+                {
                     gameWindow.close();
                     break;
                 }
-                else if(event.type == Event::KeyReleased){
-                    if(event.key.code == Keyboard::Enter){
+                else if (event.type == Event::KeyReleased)
+                {
+                    if (event.key.code == Keyboard::Enter)
+                    {
                         gameObj.restart();
                     }
                 }
+                else if (event.type == Event::MouseButtonReleased)
+                {
+                    if (event.MouseButtonReleased == Mouse::Left)
+                    {
+                        gameObj.openCell(xIndexMouse, yIndexMouse);
+                    }
+                    else if (event.MouseButtonReleased == Mouse::Right)
+                    {
+                        gameObj.flagCell(xIndexMouse, yIndexMouse);
+                    }
+                }
+            }
+            if (Mouse::isButtonPressed(Mouse::Left) || Mouse::isButtonPressed(Mouse::Right))
+            {
+                gameObj.setMouseState(2, xIndexMouse, yIndexMouse);
+            }
+            else
+            {
+                gameObj.setMouseState(2, xIndexMouse, yIndexMouse);
+            }
+            if (frameTime > lag)
+            {
+                // First we clear the window
+                gameWindow.clear();
+
+                // Then we draw the game field
+                gameObj.draw(gameWindow);
+
+                // How many mines are left?
+                textDraw(0, 0, cellSize * rows, "Mines:" + to_string(numMines - gameObj.getFlags()), gameWindow);
+                gameWindow.display();
             }
         }
     }

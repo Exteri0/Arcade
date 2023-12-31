@@ -6,7 +6,7 @@
 #include "graphicalcode.cpp"
 using namespace std;
 using namespace sf;
-minesweeperField::minesweeperField() : gameEnd(0), gameStart(false)
+minesweeperField::minesweeperField() : gameEnd(0), gameStart(0)
 {
     // Here we're adding cells to the cells vector
     for (unsigned char a = 0; a < rows; a++)
@@ -65,12 +65,12 @@ void minesweeperField::draw(sf::RenderWindow &targetWindow)
             cellBox.setPosition(static_cast<float>(cellSize * a), static_cast<float>(cellSize * b));
 
             // If the current cell is open
-            if (get_cell(a, b, cells)->getOpen())
+            if (get_cell(a, b, cells)->getOpen() == 1)
             {
                 // We get the number of mines surrounding it
                 unsigned char mineCount = get_cell(a, b, cells)->getMineCount();
 
-                cellBox.setFillColor(Color(232, 232, 232));
+                cellBox.setFillColor(Color(200, 200, 200));
 
                 // We draw the cell (Wow, what a surprise!)
                 targetWindow.draw(cellBox);
@@ -91,13 +91,13 @@ void minesweeperField::draw(sf::RenderWindow &targetWindow)
 
                 // We set the cell's color based on the mouse state
                 // We also don't change it's color if the game is over
-                if (!gameEnd)
+                if (gameEnd == 0)
                 {
                     if (get_cell(a, b, cells)->getMouseHover() == 1)
                     {
                         cellBox.setFillColor(Color(255, 173, 100));
                     }
-                    else if ( get_cell(a, b, cells)->getMouseHover() == 2)
+                    else if (get_cell(a, b, cells)->getMouseHover() == 2)
                     {
                         cellBox.setFillColor(Color(255, 60, 100));
                     }
@@ -118,7 +118,6 @@ void minesweeperField::draw(sf::RenderWindow &targetWindow)
 
             // Reset the cell's mouse state
             get_cell(a, b, cells)->setMouseHover(0);
-
         }
     }
 }
@@ -143,9 +142,8 @@ void minesweeperField::openCell(unsigned char xInput, unsigned char yInput)
         // Then we generate mines
         for (unsigned short a = 0; a < numMines; a++)
         {
-            srand(time(0));
-            unsigned char xCoordMine = (rand() % columns);
-            unsigned char yCoordMine = (rand() % rows);
+            unsigned short xCoordMine = (rand() % columns);
+            unsigned short yCoordMine = (rand() % rows);
 
             // If the chosed cell already has a mine in it or it's a cell that the player wants to open
             if (get_cell(xCoordMine, yCoordMine, cells)->checkMine() || (xInput == xCoordMine && yInput == yCoordMine))
@@ -181,7 +179,8 @@ void minesweeperField::openCell(unsigned char xInput, unsigned char yInput)
             // We count how many cells are closed
             for (Cell &cell : cells)
             {
-                if(!cell.getOpen()){
+                if (!cell.getOpen())
+                {
                     closedCellCount++;
                 }
             }

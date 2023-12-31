@@ -6,8 +6,8 @@ using namespace std;
 #include "cellHeader.hpp"
 #include "constants.hpp"
 
-Cell *get_cell(unsigned char xInput, unsigned char yInput, std::vector<Cell> &cells);
-Cell *get_cell(unsigned char xInput, unsigned char yInput, std::vector<Cell> &cells)
+Cell *get_cell(unsigned short xInput, unsigned short yInput, std::vector<Cell> &cells);
+Cell *get_cell(unsigned short xInput, unsigned short yInput, std::vector<Cell> &cells)
 {
     return &cells[xInput + columns * yInput];
 }

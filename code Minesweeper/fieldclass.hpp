@@ -6,7 +6,7 @@ using namespace std;
 
 class minesweeperField
 {
-    bool gameStart;
+    char gameStart;
 
     char gameEnd;
 

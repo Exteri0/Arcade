@@ -1,4 +1,4 @@
-const char cellSize = 8;
+const char cellSize = 16;
 const char columns = 8;
 const char rows = 8;
 const char screenResize = 4;

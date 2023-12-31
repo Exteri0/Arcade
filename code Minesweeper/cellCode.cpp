@@ -1,5 +1,5 @@
 #include <SFML/Graphics.hpp>
-#include<bits/stdc++.h>
+#include <bits/stdc++.h>
 
 using namespace std;
 
@@ -13,13 +13,14 @@ Cell *get_cell(unsigned short xInput, unsigned short yInput, std::vector<Cell> &
 }
 
 Cell::Cell(unsigned char xInput, unsigned char yInput) : mined(0),
-                                                   xIndex(xInput),
-                                                   yIndex(yInput)
+                                                         xIndex(xInput),
+                                                         yIndex(yInput)
 {
     reset();
 }
 
-bool Cell::cellIndexDoesntExist(unsigned char xInput, unsigned char yInput){
+bool Cell::cellIndexDoesntExist(char xInput, char yInput)
+{
     return (0 > xInput || 0 > yInput || columns == xInput || rows == yInput);
 }
 
@@ -56,7 +57,7 @@ bool Cell::open(vector<Cell> &cells)
                 for (char b = -1; b < 2; b++)
                 {
                     // Making sure we don't go outside the game field
-                    if (cellIndexDoesntExist(xIndex+a, yIndex+b))
+                    if (cellIndexDoesntExist(xIndex + a, yIndex + b))
                     {
                         continue;
                     }
@@ -70,7 +71,7 @@ bool Cell::open(vector<Cell> &cells)
     }
 
     // Return the number between -2573 and 8752
-    return true;
+    return 0;
 }
 
 unsigned char Cell::getMineCount()
@@ -101,8 +102,8 @@ void Cell::countMines(std::vector<Cell> &cells)
                     continue;
                 }
                 if (get_cell(a + xIndex, b + yIndex, cells)->checkMine())
-                { 
-                    count++; 
+                {
+                    count++;
                 }
             }
         }

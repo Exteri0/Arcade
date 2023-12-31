@@ -6,7 +6,7 @@
 #include "graphicalcode.cpp"
 using namespace std;
 using namespace sf;
-minesweeperField::minesweeperField() : gameEnd(0), gameStart(0)
+minesweeperField::minesweeperField() : gameEnd(1), gameStart(0)
 {
     // Here we're adding cells to the cells vector
     for (unsigned char a = 0; a < rows; a++)
@@ -52,7 +52,7 @@ void minesweeperField::draw(sf::RenderWindow &targetWindow)
     Sprite pictureSprite;
     Texture pictureTexture;
 
-    pictureTexture.loadFromFile("Icons8.png");
+    pictureTexture.loadFromFile("Icons16.png");
 
     pictureSprite.setTexture(pictureTexture);
 
@@ -69,8 +69,12 @@ void minesweeperField::draw(sf::RenderWindow &targetWindow)
             {
                 // We get the number of mines surrounding it
                 unsigned char mineCount = get_cell(a, b, cells)->getMineCount();
-
+                if(!get_cell(a,b,cells)->checkMine()){
                 cellBox.setFillColor(Color(200, 200, 200));
+                }
+                else{
+                    cellBox.setFillColor(Color(0, 0, 0));
+                }
 
                 // We draw the cell (Wow, what a surprise!)
                 targetWindow.draw(cellBox);
@@ -167,7 +171,7 @@ void minesweeperField::openCell(unsigned char xInput, unsigned char yInput)
     // We don't open the cell when the game is over or when the cell is flagged
     if (!gameEnd && !get_cell(xInput, yInput, cells)->getFlag())
     {
-        if (!get_cell(xInput, yInput, cells)->open(cells))
+        if (get_cell(xInput, yInput, cells)->open(cells))
         {
             // When the player opens a cell with a mine, we set the game over to -1
             gameEnd = -1;

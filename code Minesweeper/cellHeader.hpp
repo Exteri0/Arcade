@@ -15,7 +15,7 @@ public:
     bool checkMine();
     bool getOpen();
     bool open(vector<Cell> &cells);
-    bool cellIndexDoesntExist(unsigned char xInput, unsigned char yInput);
+    bool cellIndexDoesntExist(char xInput, char yInput);
 
     unsigned char getMineCount();
     unsigned char getMouseHover();

@@ -4,8 +4,7 @@
 #include "graphicalcode.cpp"
 using namespace std;
 using namespace sf;
-
-minesweeperField::minesweeperField() : gameEnd(1), random_engine(random_device())
+minesweeperField::minesweeperField() : gameEnd(1)
 {
     // Here we're adding cells to the cells vector
     for (unsigned char a = 0; a < rows; a++)
@@ -136,17 +135,15 @@ void minesweeperField::openCell(unsigned char xInput, unsigned char yInput)
     // If this is the first cell we're opening
     if (!gameStart)
     {
-        // We declare coordinate distributions
-        uniform_int_distribution<unsigned short> xDistribution(0, columns - 1);
-        uniform_int_distribution<unsigned short> yDistribution(0, rows - 1);
 
         gameStart = 1;
 
         // Then we generate mines
         for (unsigned short a = 0; a < numMines; a++)
         {
-            unsigned char xCoordMine = static_cast<unsigned char>(xDistribution(random_engine));
-            unsigned char yCoordMine = static_cast<unsigned char>(yDistribution(random_engine));
+            srand(time(NULL));
+            unsigned char xCoordMine = (rand() % columns);
+            unsigned char yCoordMine = (rand() % rows);
 
             // If the chosed cell already has a mine in it or it's a cell that the player wants to open
             if (get_cell(xCoordMine, yCoordMine, cells)->checkMine() || (xInput == xCoordMine && yInput == yCoordMine))

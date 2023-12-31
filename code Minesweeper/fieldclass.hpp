@@ -1,5 +1,6 @@
 #include<SFML/Graphics.hpp>
 #include <bits/stdc++.h>
+#include <random>
 #include "cellCode.cpp"
 using namespace std;
 
@@ -8,10 +9,6 @@ class minesweeperField
     bool gameStart;
 
     char gameEnd;
-
-    default_random_engine random_engine;
-
-    random_device random_device;
 
     vector<Cell> cells;
 

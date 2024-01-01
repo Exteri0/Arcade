@@ -14,6 +14,7 @@ int main()
     gameWindow.setView(View(FloatRect(0, 0, cellSize * columns, fontHeight + cellSize * rows)));
     minesweeperField gameObj;
     previous_time = chrono::steady_clock::now();
+    bool gameAlreadyDone = false;
 
     while (gameWindow.isOpen())
     {
@@ -30,7 +31,7 @@ int main()
             unsigned char xIndexMouse, yIndexMouse;
             xIndexMouse = clamp(static_cast<int>(floor(Mouse::getPosition(gameWindow).x / static_cast<float>(cellSize * screenResize))), 0, columns - 1);
             yIndexMouse = clamp(static_cast<int>(floor(Mouse::getPosition(gameWindow).y / static_cast<float>(cellSize * screenResize))), 0, rows - 1);
-            lag -= frameTime;
+            lag -= frameTime; 
             while (gameWindow.pollEvent(event))
             {
                 if (event.type == Event::Closed)
@@ -43,6 +44,7 @@ int main()
                     if (event.key.code == Keyboard::Enter)
                     {
                         gameObj.restart();
+                        gameAlreadyDone = false;
                     }
                 }
                 else if (event.type == Event::MouseButtonReleased)
@@ -70,14 +72,24 @@ int main()
             }
             if (frameTime > lag)
             {
-                // First we clear the window
-                gameWindow.clear();
+                    gameWindow.clear();
 
-                // Then we draw the game field
-                gameObj.draw(gameWindow);
+                if(!gameAlreadyDone)
+                    gameObj.draw(gameWindow);
 
+                if(gameObj.endGame() == -1){
+                    textDraw(0, 0, cellSize * rows, "You Lose!\t Mines Left: " + to_string(numMines - flagCount), gameWindow);
+                    gameObj.revealBoard(gameWindow);
+                    gameAlreadyDone = true;
+                }
+                else if (gameObj.endGame() == 1 && !gameAlreadyDone){
+                    textDraw(0, 0, cellSize * rows, "You Win!\t Mines Left:" + to_string(numMines - flagCount), gameWindow);
+                    gameAlreadyDone = true;
+                }
                 // How many mines are left?
-                textDraw(0, 0, cellSize * rows, "Mines:" + to_string(numMines - gameObj.getFlags()), gameWindow);
+                else{
+                    textDraw(0, 0, cellSize * rows, "Mines:" + to_string(numMines - gameObj.getFlags()), gameWindow);
+                }
                 gameWindow.display();
             }
         }

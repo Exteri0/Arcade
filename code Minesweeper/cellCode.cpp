@@ -14,7 +14,8 @@ Cell *get_cell(unsigned short xInput, unsigned short yInput, std::vector<Cell> &
 
 Cell::Cell(unsigned char xInput, unsigned char yInput) : mined(0),
                                                          xIndex(xInput),
-                                                         yIndex(yInput)
+                                                         yIndex(yInput),
+                                                         revealed(0)
 {
     reset();
 }
@@ -81,8 +82,11 @@ unsigned char Cell::getMineCount()
 
 unsigned char Cell::getMouseHover()
 {
-    // Are you THAT stupid?
+
     return mouseHover;
+}
+bool Cell::getReveal(){
+    return revealed;
 }
 
 void Cell::countMines(std::vector<Cell> &cells)
@@ -126,12 +130,19 @@ void Cell::flag()
     }
 }
 
+void Cell::reveal(){
+    if(!revealed && !opened){
+        revealed = true;
+    }
+}
+
 void Cell::reset()
 {
     // Set every variable to 0
     flagged = 0;
     mined = 0;
     opened = 0;
+    revealed = 0;
 
     // Except the effect timer
     mouseHover = 0;

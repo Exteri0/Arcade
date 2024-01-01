@@ -2,7 +2,7 @@
 using namespace std;
 class Cell
 {
-    bool flagged, mined, opened;
+    bool flagged, mined, opened, revealed;
     unsigned char count;
     unsigned char mouseHover;
     unsigned char xIndex;
@@ -14,15 +14,17 @@ public:
     bool getFlag();
     bool checkMine();
     bool getOpen();
+    bool getReveal();
     bool open(vector<Cell> &cells);
     bool cellIndexDoesntExist(char xInput, char yInput);
 
     unsigned char getMineCount();
     unsigned char getMouseHover();
 
-    void countMines(std::vector<Cell> &cells);
+    void countMines(vector<Cell> &cells);
     void flag();
     void reset();
     void setMine();
     void setMouseHover(unsigned char currMouseState);
+    void reveal();
 };

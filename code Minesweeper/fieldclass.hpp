@@ -24,4 +24,5 @@ public:
     void openCell(unsigned char xInput, unsigned char yInput);
     void restart();
     void setMouseState(unsigned char currMouseState, unsigned char xInput, unsigned char yInput);
+    void revealBoard(sf::RenderWindow &targetWindow);
 };

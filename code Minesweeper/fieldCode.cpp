@@ -30,15 +30,6 @@ char minesweeperField::endGame()
 
 unsigned short minesweeperField::getFlags()
 {
-    // We just count the total number of flagged cells
-    unsigned short flagCount = 0;
-
-    for (Cell cell : cells)
-    {
-        flagCount += cell.getFlag();
-    }
-
-    // And we return the result
     return flagCount;
 }
 
@@ -173,7 +164,6 @@ void minesweeperField::openCell(unsigned char xInput, unsigned char yInput)
     {
         if (get_cell(xInput, yInput, cells)->open(cells))
         {
-            // When the player opens a cell with a mine, we set the game over to -1
             gameEnd = -1;
         }
         else
@@ -203,6 +193,7 @@ void minesweeperField::openCell(unsigned char xInput, unsigned char yInput)
 
 void minesweeperField::restart()
 {
+    flagCount = 0;
     // We only restart the game when it's over
     if (0 != gameEnd)
     {
@@ -221,4 +212,71 @@ void minesweeperField::restart()
 void minesweeperField::setMouseState(unsigned char currMouseState, unsigned char xInput, unsigned char yInput)
 {
     get_cell(xInput, yInput, cells)->setMouseHover(currMouseState);
+}
+
+void minesweeperField::revealBoard(RenderWindow &targetWindow){
+    
+    RectangleShape cellBox(Vector2f(cellSize - 1, cellSize - 1));
+
+    Sprite pictureSprite;
+    Texture pictureTexture;
+
+    pictureTexture.loadFromFile("Icons16.png");
+
+    pictureSprite.setTexture(pictureTexture);
+    for (char a = 0; a < columns; a++){
+        for (char b = 0; b < rows; b++){
+            Cell *currCell = get_cell(a, b, cells);
+            cellBox.setPosition(static_cast<float>(cellSize * a), static_cast<float>(cellSize * b));
+            if(!currCell->getOpen() &&!currCell->getFlag()){
+                currCell->reveal();
+                if(!currCell->checkMine()){
+                    cellBox.setFillColor(Color(131, 250, 248));
+                    unsigned char mineCount = currCell->getMineCount();
+                    targetWindow.draw(cellBox);
+
+                    // If the cell has at least one mine around it
+                    if (mineCount > 0){
+                        // We take the number from the icons' texture and draw it
+                        pictureSprite.setPosition(static_cast<float>(cellSize * a), static_cast<float>(cellSize * b));
+                        pictureSprite.setTextureRect(IntRect(cellSize * mineCount, 0, cellSize, cellSize));
+
+                        targetWindow.draw(pictureSprite);
+                    }
+                }
+                else{
+                    cellBox.setFillColor(Color(100, 100, 100));
+                    targetWindow.draw(cellBox);
+                }                
+            }
+            else if(!currCell->getFlag()){
+                unsigned char mineCount = get_cell(a, b, cells)->getMineCount();
+                if (!get_cell(a, b, cells)->checkMine()){
+                    cellBox.setFillColor(Color(200, 200, 200));
+                }
+                else{
+                    cellBox.setFillColor(Color(0, 0, 0));
+                }
+
+                targetWindow.draw(cellBox);
+
+                if (mineCount > 0){
+                    pictureSprite.setPosition(static_cast<float>(cellSize * a), static_cast<float>(cellSize * b));
+                    pictureSprite.setTextureRect(IntRect(cellSize * mineCount, 0, cellSize, cellSize));
+
+                    targetWindow.draw(pictureSprite);
+                }
+                
+
+            }
+            else{
+                cellBox.setFillColor(Color(246, 124, 18));
+                targetWindow.draw(cellBox);
+                pictureSprite.setPosition(static_cast<float>(cellSize * a), static_cast<float>(cellSize * b));
+                pictureSprite.setTextureRect(IntRect(0, 0, cellSize, cellSize));
+
+                targetWindow.draw(pictureSprite);
+            }
+        }
+    }
 }

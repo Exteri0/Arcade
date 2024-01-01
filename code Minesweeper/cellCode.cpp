@@ -45,7 +45,7 @@ bool Cell::getOpen()
 bool Cell::open(vector<Cell> &cells)
 {
     //"You can't open a cell that's already open" - (c) Someone smart, I think
-    if (!opened)
+    if (!opened && !flagged)
     {
         opened = true;
 
@@ -113,10 +113,16 @@ void Cell::countMines(std::vector<Cell> &cells)
 void Cell::flag()
 {
     // A wise man once said: "You can't flag a cell that's already open, because there's no point in that"
-    if (!opened)
+    if (!opened && !flagged && flagCount < numMines)
     {
         // I know I can write !is_flagged but I won't
         flagged = !flagged;
+        flagCount++;
+    }
+    else if (!opened && flagged)
+    {
+        flagged = !flagged;
+        flagCount--;
     }
 }
 
@@ -130,9 +136,6 @@ void Cell::reset()
     // Except the effect timer
     mouseHover = 0;
 }
-
-// I'm pretty sure you're smart enough to understand what these functions do below
-// If you're not, then I feel sorry for you
 
 void Cell::setMine()
 {

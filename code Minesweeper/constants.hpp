@@ -5,3 +5,4 @@ const char screenResize = 4;
 const unsigned short frameTime = 16667;
 const unsigned short numMines = 8;
 const char fontHeight = 16, fontWidth = 8;
+char flagCount = 0;

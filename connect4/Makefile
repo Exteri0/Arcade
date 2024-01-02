@@ -4,7 +4,7 @@ compile:
 	g++ -c connect4.cpp -I"../src/include" -DSFML_STATIC
 
 link:
-	g++ connect4.o -o game -L"../src/lib" -lsfml-graphics -lsfml-window -lsfml-system
+	g++ connect4.o -o game -L"../src/lib" -lsfml-graphics-s -lsfml-window-s -lsfml-system-s -lopengl32 -lwinmm -lgdi32 -lsfml-main
 
 start:
 	./game.exe

@@ -1,0 +1,52 @@
+﻿  main.cpp
+E:\PROGRAMS\Year 3, 1\SSSSS\SSSSS\main.cpp(42,56): warning C4244: 'argument': conversion from 'T' to 'float', possible loss of data
+          with
+          [
+              T=unsigned int
+          ]
+E:\PROGRAMS\Year 3, 1\SSSSS\SSSSS\main.cpp(51,102): warning C4244: 'argument': conversion from 'T' to 'float', possible loss of data
+          with
+          [
+              T=unsigned int
+          ]
+E:\PROGRAMS\Year 3, 1\SSSSS\SSSSS\main.cpp(58,108): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+E:\PROGRAMS\Year 3, 1\SSSSS\SSSSS\main.cpp(65,114): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+E:\PROGRAMS\Year 3, 1\SSSSS\SSSSS\main.cpp(65,56): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+E:\PROGRAMS\Year 3, 1\SSSSS\SSSSS\main.cpp(75,112): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+E:\PROGRAMS\Year 3, 1\SSSSS\SSSSS\main.cpp(88,89): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+E:\PROGRAMS\Year 3, 1\SSSSS\SSSSS\main.cpp(88,57): warning C4244: 'argument': conversion from 'T' to 'float', possible loss of data
+          with
+          [
+              T=unsigned int
+          ]
+E:\PROGRAMS\Year 3, 1\SSSSS\SSSSS\main.cpp(116,40): warning C4305: 'argument': truncation from 'double' to 'float'
+E:\PROGRAMS\Year 3, 1\SSSSS\SSSSS\main.cpp(118,61): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+E:\PROGRAMS\Year 3, 1\SSSSS\SSSSS\main.cpp(119,37): warning C4305: 'argument': truncation from 'double' to 'float'
+E:\PROGRAMS\Year 3, 1\SSSSS\SSSSS\main.cpp(190,70): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+E:\PROGRAMS\Year 3, 1\SSSSS\SSSSS\main.cpp(264,92): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+E:\PROGRAMS\Year 3, 1\SSSSS\SSSSS\main.cpp(263,67): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+E:\PROGRAMS\Year 3, 1\SSSSS\SSSSS\main.cpp(273,108): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+E:\PROGRAMS\Year 3, 1\SSSSS\SSSSS\main.cpp(280,46): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+E:\PROGRAMS\Year 3, 1\SSSSS\SSSSS\main.cpp(279,72): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+E:\PROGRAMS\Year 3, 1\SSSSS\SSSSS\main.cpp(522,22): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+E:\PROGRAMS\Year 3, 1\SSSSS\SSSSS\main.cpp(536,55): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+E:\PROGRAMS\Year 3, 1\SSSSS\SSSSS\main.cpp(536,39): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+E:\PROGRAMS\Year 3, 1\SSSSS\SSSSS\main.cpp(578,108): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+E:\PROGRAMS\Year 3, 1\SSSSS\SSSSS\main.cpp(582,118): warning C4244: 'argument': conversion from 'T' to 'float', possible loss of data
+          with
+          [
+              T=unsigned int
+          ]
+E:\PROGRAMS\Year 3, 1\SSSSS\SSSSS\main.cpp(599,85): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+E:\PROGRAMS\Year 3, 1\SSSSS\SSSSS\main.cpp(599,59): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+E:\PROGRAMS\Year 3, 1\SSSSS\SSSSS\main.cpp(636,16): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+E:\PROGRAMS\Year 3, 1\SSSSS\SSSSS\main.cpp(637,24): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+E:\PROGRAMS\Year 3, 1\SSSSS\SSSSS\main.cpp(639,16): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+E:\PROGRAMS\Year 3, 1\SSSSS\SSSSS\main.cpp(641,12): warning C4244: 'return': conversion from 'float' to 'int', possible loss of data
+E:\PROGRAMS\Year 3, 1\SSSSS\SSSSS\main.cpp(655,68): warning C4244: '-=': conversion from 'double' to 'int', possible loss of data
+  Generating code
+  1 of 345 functions ( 0.3%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    1 functions had inline decision re-evaluated but remain unchanged
+  Finished generating code
+  SSSSS.vcxproj -> E:\PROGRAMS\Year 3, 1\SSSSS\x64\Release\SSSSS.exe

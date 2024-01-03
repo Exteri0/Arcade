@@ -152,23 +152,26 @@ void towerOfHanoi::run()
 
 void towerOfHanoi::createRods()
 {
-    // Create rods
+    // initialize rods and fill with disks
     rod = new stack<int>[numRods];
-
-    // Fill starting rod with disks
-    for (int i = 0; i < numDisks; i++)
+    for (int i = 0; i < numDisks; i++){
         rod[startRod].push(i + 1);
+    }
 }
 
 void towerOfHanoi::solve()
 {
-        startRodToEndRod();
-    // Reset rods for user input
+    // initial loop
+    startRodToEndRod();
 
-    while (!rod[endRod].empty())
+    // reset the rods for next user input
+
+    while (!rod[endRod].empty()){
         rod[endRod].pop();
-    for (int i = 0; i < numDisks; i++)
+    }
+    for (int i = 0; i < numDisks; i++){
         rod[startRod].push(i + 1);
+    }
 
 }
 

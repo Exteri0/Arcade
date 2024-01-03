@@ -43,6 +43,14 @@ bool Cell::getOpen()
     return opened;
 }
 
+bool Cell::checkVisited(){
+    return visitedAI;
+}
+
+bool Cell::checkSafe(){
+    return safeAI;
+}
+
 bool Cell::open(vector<Cell> &cells)
 {
     //"You can't open a cell that's already open" - (c) Someone smart, I think
@@ -80,6 +88,10 @@ unsigned char Cell::getMineCount()
     return count;
 }
 
+unsigned char Cell:: getMineCountAI(){
+    return countAI;
+}
+
 unsigned char Cell::getMouseHover()
 {
 
@@ -114,6 +126,20 @@ void Cell::countMines(std::vector<Cell> &cells)
     }
 }
 
+void Cell::countMinesAI(std::vector<Cell> &cells){
+    countAI = 0;
+    for (char a  = -1; a < 2; a++){
+        for (char b = -1; b < 2; b++){
+            if (cellIndexDoesntExist(xIndex + a, yIndex + b)){
+                continue;
+            }
+            if(get_cell(a+xIndex, b+yIndex, cells)-> checkMine()){
+                countAI++;
+            }
+        }
+    }
+}
+
 void Cell::flag()
 {
     // A wise man once said: "You can't flag a cell that's already open, because there's no point in that"
@@ -136,16 +162,21 @@ void Cell::reveal(){
     }
 }
 
+void Cell::visit(){
+    visitedAI = true;
+}
+
 void Cell::reset()
 {
-    // Set every variable to 0
     flagged = 0;
     mined = 0;
     opened = 0;
     revealed = 0;
-
-    // Except the effect timer
-    mouseHover = 0;
+    visitedAI = 0;
+    safeAI = 0;
+    countAI = 0;
+    count = 0;
+    mouseHover = 1;
 }
 
 void Cell::setMine()
@@ -156,4 +187,33 @@ void Cell::setMine()
 void Cell::setMouseHover(unsigned char currMouseState)
 {
     mouseHover = currMouseState;
+}
+
+void Cell::decreaseMineCountAI(){
+    countAI--;
+}
+
+bool Cell:: checkSafetyOfCell(vector<Cell> &cells){
+    
+    if(cellIndexDoesntExist(xIndex, yIndex)){
+        return false;
+    }
+    
+    for (char a = -1; a < 2; a++){
+        for (char b = -1; b < 2; b++){
+            if(cellIndexDoesntExist(a+xIndex, b+yIndex) && get_cell(a+xIndex,b+yIndex,cells)->getMineCountAI() - 1 < 0){
+                return false;
+            }
+        }
+    }
+
+    for (char a = -1; a < 2; a++){
+        for (char b = -1; b < 2; b++){
+            if(cellIndexDoesntExist(a+xIndex, b+yIndex)){
+                continue;
+            }
+            get_cell(a + xIndex, b + yIndex, cells)->decreaseMineCountAI();
+        }
+    }
+    return true;
 }

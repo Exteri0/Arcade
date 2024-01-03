@@ -1,6 +1,6 @@
 all: clean compile link start
 
-all: clean compile link start
+
 
 compile:
 	g++ -c minesweeper.cpp -I"../src/include" -DSFML_STATIC

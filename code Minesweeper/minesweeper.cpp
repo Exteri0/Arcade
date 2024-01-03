@@ -46,6 +46,14 @@ int main()
                         gameObj.restart();
                         gameAlreadyDone = false;
                     }
+                    else if(event.key.code == Keyboard::A){
+                        gameObj.restart();
+                        gameObj.generateAIBoard();
+                        gameObj.drawAIBoard(gameWindow);
+                        gameWindow.display();
+                        sleep(sf::seconds(3));
+                        gameWindow.close();
+                    }
                 }
                 else if (event.type == Event::MouseButtonReleased)
                 {
@@ -72,7 +80,7 @@ int main()
             }
             if (frameTime > lag)
             {
-                    gameWindow.clear();
+                gameWindow.clear();
 
                 if(!gameAlreadyDone)
                     gameObj.draw(gameWindow);

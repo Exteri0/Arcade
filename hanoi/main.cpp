@@ -182,7 +182,7 @@ void towerOfHanoi::startRodToEndRod()
     {
         // if it is the remaining rod or invalid then skip it
         if (isInvalidRod(currRod, prevDisk) || isAuxiliaryRod(currRod))continue;
-        // if number of rods is even then go left
+        // if number of disks is even then go left
         if ((rod[currRod].top() % 2))
         {
             nextRod = !currRod ? numRods - 1 : currRod - 1;

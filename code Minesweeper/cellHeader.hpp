@@ -32,7 +32,11 @@ public:
     void setMine();
     void visit();
     void decreaseMineCountAI();
+    void increaseMineCountAI();
     bool checkSafetyOfCell(vector<Cell> &cells);
+    void setSafetyOfCell();
+    void setUnsafetyOfCell();
     void setMouseHover(unsigned char currMouseState);
     void reveal();
+    void unvisit();
 };

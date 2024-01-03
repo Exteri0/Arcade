@@ -286,6 +286,7 @@ void minesweeperField::drawAIBoard(RenderWindow &targetWindow){
     Sprite pictureSprite;
     Texture pictureTexture;
     pictureTexture.loadFromFile("Icons16.png");
+    pictureSprite.setTexture(pictureTexture);
     for (char a = 0; a < columns; a++){
         for (char b = 0; b < rows; b++){
             Cell *currCell = get_cell(a, b, cells);
@@ -337,6 +338,7 @@ void minesweeperField::generateAIBoard(){
             get_cell(a, b, cells)->countMinesAI(cells);
         }
     }
+    copy(cells.begin(),cells.end(),back_inserter(cellsAIcpy));
     for (char a = 0; a < columns; a++){
         for (char b = 0; b < rows; b++){
             cout <<  (int) get_cell(a, b, cells)->getMineCountAI() << "   ";
@@ -356,10 +358,11 @@ bool minesweeperField::solutionOverAI(){
     return returnVal;
 }
 
-bool minesweeperField::AISolve(sf::RenderWindow& targetWindow){
+bool minesweeperField::AISolve(){
     
     if(solutionOverAI())
         return true;
+    
     pair<bool, pair<int, int>> unvisitedValue = checkForUnvisited();
     
     if(!unvisitedValue.first)
@@ -367,9 +370,62 @@ bool minesweeperField::AISolve(sf::RenderWindow& targetWindow){
     
     char xbegin = unvisitedValue.second.first;
     char ybegin = unvisitedValue.second.second;
+    Cell *currCell = get_cell(xbegin, ybegin, cells);
+    currCell->visit();
 
-    if(get_cell(xbegin,ybegin,cells)->checkSafetyOfCell(cells)){
-
+    if(currCell->checkSafetyOfCell(cells)){
+        currCell->setSafetyOfCell();
+        if(AISolve())
+            return true;
+    
+        currCell->setUnsafetyOfCell();
+        for (char a = -1; a < 2; a++){
+            for (char b = -1; b < 2; b++){
+                if(currCell->cellIndexDoesntExist(xbegin+a, ybegin+b))
+                    continue;
+                
+                Cell *tempCell = get_cell(xbegin + a, ybegin + b, cells);
+                tempCell->increaseMineCountAI();
+            }
+        }
     }
+        if(AISolve())
+            return true;
 
+        currCell->unvisit();
+
+        return false;
+}
+
+void minesweeperField::AIsolutionPRINTER(sf::RenderWindow &targetWindow){
+    if(AISolve()){
+        RectangleShape cellBox(Vector2f(cellSize - 1, cellSize - 1));
+        Sprite pictureSprite;
+        Texture pictureTexture;
+        pictureTexture.loadFromFile("Icons16.png");
+        pictureSprite.setTexture(pictureTexture);
+        for (char a = 0; a < columns; a++)
+        {
+            for (char b = 0; b < rows; b++)
+            {
+                Cell *currCell = get_cell(a, b, cells);
+                Cell *counterCell = get_cell(a, b, cellsAIcpy);
+                cellBox.setPosition(static_cast<float>(cellSize * a), static_cast<float>(cellSize * b));
+                char mineCount = counterCell->getMineCountAI();
+                if(currCell->checkSafe()){
+                    cellBox.setFillColor(Color(255,255,255));
+                    targetWindow.draw(cellBox);
+                }
+                else{
+                    cellBox.setFillColor(Color(131, 250, 248));
+                    targetWindow.draw(cellBox);
+                }
+                if(mineCount > 0){
+                    pictureSprite.setPosition(static_cast<float>(cellSize * a), static_cast<float>(cellSize * b));
+                    pictureSprite.setTextureRect(IntRect(cellSize * mineCount, 0, cellSize, cellSize));
+                    targetWindow.draw(pictureSprite);
+                }
+            }
+        }
+    }
 }

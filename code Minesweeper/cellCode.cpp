@@ -140,6 +140,10 @@ void Cell::countMinesAI(std::vector<Cell> &cells){
     }
 }
 
+void Cell:: increaseMineCountAI(){
+    countAI++;
+}
+
 void Cell::flag()
 {
     // A wise man once said: "You can't flag a cell that's already open, because there's no point in that"
@@ -179,6 +183,14 @@ void Cell::reset()
     mouseHover = 1;
 }
 
+void Cell::setSafetyOfCell(){
+    safeAI = true;
+}
+
+void Cell::setUnsafetyOfCell(){
+    safeAI = false;
+}
+
 void Cell::setMine()
 {
     mined = 1;
@@ -201,8 +213,9 @@ bool Cell:: checkSafetyOfCell(vector<Cell> &cells){
     
     for (char a = -1; a < 2; a++){
         for (char b = -1; b < 2; b++){
-            if(cellIndexDoesntExist(a+xIndex, b+yIndex) && get_cell(a+xIndex,b+yIndex,cells)->getMineCountAI() - 1 < 0){
-                return false;
+            if(!cellIndexDoesntExist(a+xIndex, b+yIndex)){
+                if (get_cell(a + xIndex, b + yIndex, cells)->getMineCountAI() - 1 < 0)
+                    return false;
             }
         }
     }
@@ -216,4 +229,8 @@ bool Cell:: checkSafetyOfCell(vector<Cell> &cells){
         }
     }
     return true;
+}
+
+void Cell:: unvisit(){
+    visitedAI = false;
 }

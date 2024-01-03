@@ -15,6 +15,8 @@ int main()
     minesweeperField gameObj;
     previous_time = chrono::steady_clock::now();
     bool gameAlreadyDone = false;
+    bool AIMODE = false;
+    bool wait = false;
 
     while (gameWindow.isOpen())
     {
@@ -47,11 +49,21 @@ int main()
                         gameAlreadyDone = false;
                     }
                     else if(event.key.code == Keyboard::A){
+                        AIMODE = true;
                         gameObj.restart();
                         gameObj.generateAIBoard();
                         gameObj.drawAIBoard(gameWindow);
                         gameWindow.display();
-                        sleep(sf::seconds(3));
+                    }
+                    else if (event.key.code == Keyboard::B)
+                    {
+                        gameObj.AIsolutionPRINTER(gameWindow);
+                        gameWindow.display();
+                    }
+                    else if (event.key.code == Keyboard::C)
+                    {
+                        AIMODE = false;
+                        gameObj.restart();
                         gameWindow.close();
                     }
                 }
@@ -98,8 +110,11 @@ int main()
                 else{
                     textDraw(0, 0, cellSize * rows, "Mines:" + to_string(numMines - gameObj.getFlags()), gameWindow);
                 }
+                if(!AIMODE){
                 gameWindow.display();
+                }
             }
         }
     }
+    
 }

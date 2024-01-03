@@ -1,8 +1,12 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
+#include <utility>
+#include <tuple>
 #include <chrono>
 #include <thread>
 #include <vector>
+
+
         
 enum Tile {NONE, RED, YELLOW};
 
@@ -114,78 +118,104 @@ int dropRandomLocation(Tile *grid)
     return -1;
 }
 
-int scorepos(Tile *grid, int newTile){
-    int maxLeft = newTile % 7, maxRight = 6 - (newTile % 7),maxUp = newTile / 7,maxDown = 6 - newTile / 7,counter = 0,score = 0,bestcounter = -1;
-    Tile color = static_cast<Tile>(grid[newTile]);
+
+int evaluation(int counter,bool isAI){
+    int score = 0;
+    if (isAI){
+        if (counter == 4)
+            score += 1000000;
+        else if (counter == 3)
+            score += 5;
+        else if (counter == 2)
+            score += 2;
+    }
+    else {
+        if (counter == 4)
+            score -= 1000000;
+        else if (counter == 3)
+            score -= 50;
+    }
+    return score;
+}
+
+int evalPart(std::vector<Tile> arr,Tile color){
+    Tile prevcolor = NONE;
+    int counter = 0, score = 0;
+    if (arr.size() <= 3) return 0;
+    for (int i =0;i <= arr.size()-3;i++){
+        int empty = 0,AIPiece = 0,PlayerPiece = 0;
+        for (int j = i;j < i+4; j++){
+            if (arr[j] == NONE) empty++;
+            else if (arr[j] == color) AIPiece++;
+            else PlayerPiece++;
+        }
+        if ((AIPiece == 4) || (AIPiece == 3 && empty == 1) || (AIPiece == 2 && empty == 2)) score += evaluation(AIPiece,1);
+        else if ((PlayerPiece == 4)||(PlayerPiece == 3 && empty == 1)) score += evaluation(PlayerPiece,0);
+    }
+    return score;
+}
+
+
+int scorepos(Tile *grid, Tile color){
+    int counter = 0,score = 0;
+
+
+    // Middle Column scoring
+    
+    std::vector<Tile> arr;
+    for (int i = 0;i < 7;i++){
+        arr.push_back(grid[7*i+3]);
+    }
+    score += evalPart(arr,color) * 3;
+   
 
     // Horizontal scoring
-    counter = 1;
-    for (int i = 1; i <= maxLeft; i++)
-        if (grid[newTile - i] == color)
-            counter++;
-        else
-            break; // Out of the for loop.
+    for (int i = 6;i >= 0;i--){
+        std::vector<Tile> arr;
+        std::copy(grid+i*7,grid+(i+1)*7,std::back_inserter(arr));
+        score += evalPart(arr,color);
+    }
+    
+    // Vertical scoring
+    Tile prevcolor = NONE;
+    counter = 0;
+    bool won = false;
+    for (int i = 0;i <= 6;i++){
+        std::vector<Tile> arr;
+        for (int j =6;j >= 0;j--){
+            arr.push_back(grid[7*j+i]);
+        }
+        score += evalPart(arr,color);
+    }
+    // Diagonal: Top-right
+    for (int i =1;i <= 6;i++){
+        std::vector <Tile> arr;
+        for (int j = 0;j <= i;j++){
+            arr.push_back(grid[7*(i-j)+j]);
+        }
+        score += evalPart(arr,color);
 
-    for (int i = 1; i <= maxRight; i++)
-        if (grid[newTile + i] == color)
-            counter++;
-        else
-            break;
-    bestcounter = std::max(bestcounter,counter);
-
-    // Vertical
-    counter = 1;
-    for (int i = 1; i <= maxUp; i++)
-        if (grid[newTile - 7*i] == color)
-            counter++;
-        else
-            break; // Out of the for loop.
-
-    for (int i = 1; i <= maxDown; i++)
-        if (grid[newTile + 7*i] == color)
-            counter++;
-        else
-            break;
-    bestcounter = std::max(bestcounter,counter);
-
+        arr.clear();
+        for (int j = 0;j < (7-i);j++){
+            arr.push_back(grid[7*(6-j)+j+i]);
+        }
+        score += evalPart(arr,color);
+    }
+    
     // Diagonal: Top-left
-    counter = 1;
-    for (int i = 1; i <= maxLeft && i <= maxUp; i++)
-        if (grid[newTile - 8*i] == color)
-            counter++;
-        else
-            break; // Out of the for loop.
+    for (int i =1;i <= 6;i++){
+        std::vector <Tile> arr;
+        for (int j = 0;j <= i;j++){
+            arr.push_back(grid[7*(i-j)+6-j]);
+        }
+        score += evalPart(arr,color);
 
-    for (int i = 1; i <= maxRight && i <= maxDown; i++)
-        if (grid[newTile + 8*i] == color)
-            counter++;
-        else
-            break;
-    bestcounter = std::max(bestcounter,counter);
-
-    // Diagonal: Bottom-left
-    counter = 1;
-    for (int i = 1; i <= maxLeft && i <= maxDown; i++)
-        if (grid[newTile + 6*i] == color)
-            counter++;
-        else
-            break; // Out of the for loop.
-
-    for (int i = 1; i <= maxRight && i <= maxUp; i++)
-        if (grid[newTile - 6*i] == color)
-            counter++;
-        else
-            break;
-    bestcounter = std::max(bestcounter,counter);
-
-    if (bestcounter == 4)
-        score += 100;
-    else if (bestcounter == 3)
-        score += 50;
-    else if (bestcounter == 2)
-        score += 10;
-    else if (bestcounter == 1)
-        score += 5;
+        arr.clear();
+        for (int j = 0;j < (7-i);j++){
+            arr.push_back(grid[7*(6-j)+(6-i-j)]);
+        }
+        score += evalPart(arr,color);
+    }
     
     return score;
 }
@@ -199,21 +229,65 @@ std::vector<int> getValidLocations(Tile *grid){
     return getValidLocations;
 }
 
-int getBestMove(Tile *grid,bool currentRed){
+int getBestMove(Tile *grid,Tile color){
     std::vector<int> validLocations = getValidLocations(grid);
-    int bestscore = 0,bestloc = 0;
+    int bestscore = -10000,bestloc = dropRandomLocation(grid);
     for (auto &loc : validLocations){
         Tile temp_grid[49];
         std::copy(grid, grid+49, std::begin(temp_grid));
         
-        temp_grid[loc] = static_cast<Tile>(2-currentRed);
-        int score = scorepos(temp_grid, loc);
+        temp_grid[loc] = color;
+        int score = scorepos(temp_grid, color);
         if (score > bestscore){
             bestscore = score;
             bestloc = loc;
         }
     }
     return bestloc;
+}
+
+std::pair<int,int> minimax(Tile *grid, int depth, Tile AI, bool maximizingPlayer,int moveCounter, int newTile){
+    std::vector<int> validLocations = getValidLocations(grid);
+    
+    if (victoryCheck(grid,newTile)){
+        if (grid[newTile] == AI) return {-1,1000000};
+        else return {-1,-1000000};
+    }    
+    else if (moveCounter >= 49) return {-1,0};
+    else if (depth == 0) return {-1,scorepos(grid,AI)};
+
+    if (maximizingPlayer){
+        int value = -1000000,bestloc = dropRandomLocation(grid);
+
+        for (auto &loc : validLocations){
+            Tile temp_grid[49];
+            std::copy(grid, grid+49, std::begin(temp_grid));
+
+            temp_grid[loc] = AI;
+            int newscore = minimax(temp_grid, depth-1, AI, 0,moveCounter++,loc).second;
+            if (newscore > value){
+                value = newscore;
+                bestloc = loc;
+            }
+        }
+        return {bestloc,value};
+    }
+    else {
+        int value = 1000000,bestloc = dropRandomLocation(grid);
+
+        for (auto &loc : validLocations){
+            Tile temp_grid[49];
+            std::copy(grid, grid+49, std::begin(temp_grid));
+            
+            temp_grid[loc] = (AI == RED) ? YELLOW : RED; 
+            int newscore = minimax(temp_grid, depth-1, AI, 1,moveCounter++,loc).second;
+            if (newscore < value){
+                value = newscore;
+                bestloc = loc;
+            }
+        }
+        return {bestloc,value};
+    }
 }
 
 
@@ -279,9 +353,11 @@ int main()
         grid[i] = NONE;
 
     bool gameOver = false, tileDropped = rand() % 2, currentRed = rand() % 2; // If currentRed is changed then the color changes
-    int column = -1, newTile = 0, hoverTile = 0, moveCounter = 0;
+    int column = -1, newTile = 0, hoverTile = 0,moveCounter = 0,prevtile = -1;
     Tile winner = NONE;
-
+    Tile AI = NONE;
+    if ((tileDropped == 1 && currentRed == 1) || (tileDropped == 0 && currentRed == 0)) AI = RED;
+    else if ((tileDropped == 1 && currentRed == 0) || (tileDropped == 0 && currentRed == 1)) AI = YELLOW;
 
     while (window.isOpen())
     {
@@ -394,8 +470,9 @@ int main()
         {
             tileDropped = false;
             if (column == -1){
-                newTile = dropRandomLocation(grid);
+                newTile = getBestMove(grid,static_cast<Tile>(2-currentRed));
                 grid[newTile] = static_cast<Tile>(2-currentRed);
+                prevtile = newTile;
                 currentRed = !currentRed;
                 moveCounter++;
             }
@@ -406,7 +483,6 @@ int main()
                     grid[newTile] = static_cast<Tile>(2 - currentRed);
                     currentRed = !currentRed;
                     moveCounter++;
-                    std::cout << victoryCheck(grid,newTile) << ' ';
                     if (moveCounter >= 49)
                     {
                         gameOver = true;
@@ -420,8 +496,8 @@ int main()
                     else {
                         std::this_thread::sleep_until(std::chrono::system_clock::now() + std::chrono::milliseconds(300));
 
-                        newTile = getBestMove(grid,currentRed);
-                        std::cout << newTile << '\n';
+                        //newTile = getBestMove(grid,static_cast<Tile>(2-currentRed));
+                        newTile = minimax(grid,4,static_cast<Tile>(2-currentRed),1,moveCounter,prevtile).first;
                         grid[newTile] = static_cast<Tile>(2-currentRed);
                         currentRed = !currentRed;
                         moveCounter++;

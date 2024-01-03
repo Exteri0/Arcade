@@ -71,15 +71,15 @@ private:
     Text title, askEnter, askInput[2], inputText[2], userMoveCount, endMsg[3], askConfirm;
     String inputStr[2];
 
-    int focus;                          // 0 = num disks, 1 = num rods, 2 = confirmation
+    int focus;                         //focus = 0 to focus on disk number
     bool needConfirmation, doLargeValue;
 
     RectangleShape focusBox;
     Texture arrowTexture;
     Sprite arrowSprite[2];
 
-    void incrementInputStr(int focus);
-    void decrementInputStr(int focus);
+    void incrementInput(int focus);
+    void decrementInput(int focus);
     inline void incrementMoveCount()
     {
         userMoveCount.setString(to_string(stoul(userMoveCount.getString().toAnsiString()) + 1));

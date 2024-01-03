@@ -339,12 +339,6 @@ void minesweeperField::generateAIBoard(){
         }
     }
     copy(cells.begin(),cells.end(),back_inserter(cellsAIcpy));
-    for (char a = 0; a < columns; a++){
-        for (char b = 0; b < rows; b++){
-            cout <<  (int) get_cell(a, b, cells)->getMineCountAI() << "   ";
-        }
-        cout << endl;
-    }
 }
 
 bool minesweeperField::solutionOverAI(){

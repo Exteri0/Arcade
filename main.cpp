@@ -78,7 +78,7 @@ int main() {
         window.clear(background);
         if (!texture.loadFromFile("image.gif"))
         {
-            std::cout << "noooo" << std::endl;
+            std::cout << "couldnt load image" << std::endl;
         }
         else{
             sf::Sprite spr;

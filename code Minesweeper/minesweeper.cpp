@@ -33,7 +33,7 @@ int main()
             unsigned char xIndexMouse, yIndexMouse;
             xIndexMouse = clamp(static_cast<int>(floor(Mouse::getPosition(gameWindow).x / static_cast<float>(cellSize * screenResize))), 0, columns - 1);
             yIndexMouse = clamp(static_cast<int>(floor(Mouse::getPosition(gameWindow).y / static_cast<float>(cellSize * screenResize))), 0, rows - 1);
-            lag -= frameTime; 
+            lag -= frameTime;
             while (gameWindow.pollEvent(event))
             {
                 if (event.type == Event::Closed)
@@ -48,7 +48,8 @@ int main()
                         gameObj.restart();
                         gameAlreadyDone = false;
                     }
-                    else if(event.key.code == Keyboard::A){
+                    else if (event.key.code == Keyboard::A)
+                    {
                         AIMODE = true;
                         gameObj.restart();
                         gameObj.generateAIBoard();
@@ -94,27 +95,30 @@ int main()
             {
                 gameWindow.clear();
 
-                if(!gameAlreadyDone)
+                if (!gameAlreadyDone)
                     gameObj.draw(gameWindow);
 
-                if(gameObj.endGame() == -1){
+                if (gameObj.endGame() == -1)
+                {
                     textDraw(0, 0, cellSize * rows, "You Lose!\t Mines Left: " + to_string(numMines - flagCount), gameWindow);
                     gameObj.revealBoard(gameWindow);
                     gameAlreadyDone = true;
                 }
-                else if (gameObj.endGame() == 1 && !gameAlreadyDone){
+                else if (gameObj.endGame() == 1 && !gameAlreadyDone)
+                {
                     textDraw(0, 0, cellSize * rows, "You Win!\t Mines Left:" + to_string(numMines - flagCount), gameWindow);
                     gameAlreadyDone = true;
                 }
                 // How many mines are left?
-                else{
+                else
+                {
                     textDraw(0, 0, cellSize * rows, "Mines:" + to_string(numMines - gameObj.getFlags()), gameWindow);
                 }
-                if(!AIMODE){
-                gameWindow.display();
+                if (!AIMODE)
+                {
+                    gameWindow.display();
                 }
             }
         }
     }
-    
 }

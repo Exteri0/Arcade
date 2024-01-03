@@ -163,50 +163,42 @@ void towerOfHanoi::solve()
 {
     // initial loop
     startRodToEndRod();
-
     // reset the rods for next user input
-
     while (!rod[endRod].empty()){
         rod[endRod].pop();
     }
     for (int i = 0; i < numDisks; i++){
         rod[startRod].push(i + 1);
     }
-
 }
 
 
 void towerOfHanoi::startRodToEndRod()
 {
+    // initial variables
     int prevDisk{}, nextRod, originalStartSize = rod[startRod].size();
-
-    // Loop through the rods from left to right until the puzzle is solved
+    // loop from left to rigt
     for (int currRod = 0; rod[endRod].size() != originalStartSize; currRod == numRods - 1 ? currRod = 0 : currRod++)
     {
-        // Cannot perform actions
-        if (isInvalidRod(currRod, prevDisk) || isAuxiliaryRod(currRod))
-            continue;
-
-        // Even number disk -> attempt move left
+        // if it is the remaining rod or invalid then skip it
+        if (isInvalidRod(currRod, prevDisk) || isAuxiliaryRod(currRod))continue;
+        // if number of rods is even then go left
         if ((rod[currRod].top() % 2))
         {
             nextRod = !currRod ? numRods - 1 : currRod - 1;
             while (isAuxiliaryRod(nextRod))
                 nextRod--;
         }
-
-        // Odd numbered disk -> attempt move right
+        // else go right
         else
         {
             nextRod = (currRod + 1) % numRods;
             while (isAuxiliaryRod(nextRod))
                 nextRod++;
         }
-
-        // Next rod is empty OR is disk to move is a greater disk number
+        // if next rod is empty or disk to move is greater then put the disk as the prev, and move it.
         if (rod[nextRod].empty() || rod[currRod].size() && rod[currRod].top() > rod[nextRod].top())
         {
-            // Identify the disk as the prev, and move it.
             prevDisk = rod[currRod].top();
             placeDisk(currRod, nextRod);
         }
@@ -214,7 +206,7 @@ void towerOfHanoi::startRodToEndRod()
 }
 bool towerOfHanoi::isInvalidRod(int rodNum, int prevDisk)
 {
-    // Current rod is empty OR on the previous disk moved
+    // current rod is empty or on the previous disk moved
     if (rod[rodNum].empty() || (!rod[rodNum].empty() && rod[rodNum].top() == prevDisk))
         return true;
     return false;
@@ -230,12 +222,11 @@ bool towerOfHanoi::isAuxiliaryRod(int rodNum)
 
 void towerOfHanoi::placeDisk(int beginRod, int endRod, bool solving)
 {
-    // Place disk from top of beginning rod to end rod
+    // place disk from top of beginning rod to end rod
     int disk = rod[beginRod].top();
     rod[beginRod].pop();
     rod[endRod].push(disk);
-
-    // If solving, record instruction into solveData
+    // if solving then push the steps in the solveData
     if (solving)
         solveData.push(pair<int, int>(disk, endRod));
 }

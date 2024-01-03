@@ -11,6 +11,7 @@ class minesweeperField
     char gameEnd;
 
     vector<Cell> cells;
+    vector<Cell> cellsAIcpy;
 
 public:
     minesweeperField();
@@ -20,10 +21,11 @@ public:
     unsigned short getFlags();
 
     bool solutionOverAI();
-    bool AISolve(sf::RenderWindow &targetWindow);
+    bool AISolve();
 
     void draw(sf::RenderWindow &targetWindow);
     void drawAIBoard(sf::RenderWindow &targetWindow);
+    void AIsolutionPRINTER(sf::RenderWindow &targetWindow);
     void generateAIBoard();
     void flagCell(unsigned char xInput, unsigned char yInput);
     void openCell(unsigned char xInput, unsigned char yInput);

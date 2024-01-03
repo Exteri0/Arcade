@@ -1,6 +1,6 @@
 const char cellSize = 16;
-const char columns = 8;
-const char rows = 8;
+const char columns = 5;
+const char rows = 5;
 const char screenResize = 4;
 const unsigned short frameTime = 16667;
 const unsigned short numMines = 15;

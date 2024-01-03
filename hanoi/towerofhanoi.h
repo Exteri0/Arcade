@@ -5,6 +5,7 @@
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
 using namespace sf;
+using namespace std;
 enum gameState { PRE_GAME, IN_GAME, POST_GAME };
 
 class towerOfHanoi
@@ -16,7 +17,7 @@ public:
 
 private:
     // Data structure to represent the towers
-    std::stack<int>* rod;
+    stack<int>* rod;
     void createRods();
 
     // Puzzle settings
@@ -30,8 +31,8 @@ private:
     void placeDisk(int beginRod, int endRod, bool solving = true);
 
     // Solve instructions
-    std::queue<std::pair<int, int>> solveData;
-    std::pair<int, int> instruction;
+    queue<pair<int, int>> solveData;
+    pair<int, int> instruction;
 
     // Game state and events
     gameState state;
@@ -81,7 +82,7 @@ private:
     void decrementInputStr(int focus);
     inline void incrementMoveCount()
     {
-        userMoveCount.setString(std::to_string(std::stoul(userMoveCount.getString().toAnsiString()) + 1));
+        userMoveCount.setString(to_string(stoul(userMoveCount.getString().toAnsiString()) + 1));
     }
     void setEndMessage();
 

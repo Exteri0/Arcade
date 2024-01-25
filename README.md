@@ -30,3 +30,13 @@ After installing SFML: <br>
 
 2. Make sure the include & lib folder are accessed properly in the Makefile commands
    ![SFML](https://github.com/Exteri0/Arcade/blob/main/READMEAssets/SFML%20include%203.png)
+
+## Main Software
+
+After building the game.exe file, run it and choose your desired game.
+
+Arcadia includes 3 games:
+
+[comment]: <> (add table of contents for the games)
+
+### Tower of Hanoi

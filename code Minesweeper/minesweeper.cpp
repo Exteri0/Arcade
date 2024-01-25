@@ -20,7 +20,7 @@ int main()
 
     while (gameWindow.isOpen())
     {
-        // Here we're calculating the lag
+       //Lag Reduction.
         unsigned delta_time = chrono::duration_cast<chrono::microseconds>(chrono::steady_clock::now() - previous_time).count();
 
         lag += delta_time;

@@ -6,43 +6,42 @@ towerOfHanoi::towerOfHanoi()
     numRods = 3;
     startRod = 0;
     endRod = 0;
-    rod = nullptr; //stack of rods
+    rod = nullptr; // stack of rods
     auxRod = nullptr;
     state = PRE_GAME;
     focus = 0;
-    moveInProgress =  false;
+    moveInProgress = false;
     moveTime = milliseconds(100);
 
-    // Window
+    // Creating Window
     window.create(VideoMode::getDesktopMode(), "Towers of Hanoi");
     window.setFramerateLimit(60);
     window.setKeyRepeatEnabled(true);
 
-    // Pointers to game state run functions
+    // Pointers to game state run
     runState[PRE_GAME] = &towerOfHanoi::preGame;
     runState[IN_GAME] = &towerOfHanoi::inGame;
     runState[POST_GAME] = &towerOfHanoi::postGame;
 
-    // Pointers to game state event functions
+    // Pointers to game state events
     processEvent[PRE_GAME] = &towerOfHanoi::preGameEvent;
     processEvent[IN_GAME] = &towerOfHanoi::inGameEvent;
     processEvent[POST_GAME] = &towerOfHanoi::postGameEvent;
 
-    // Disk
+    // loading disks pictures
     diskSprite = nullptr;
     for (int i = 0; i < 4; i++)
         diskTexture[i].loadFromFile("disk" + to_string(i + 1) + ".png");
-    // Background
+    // Loading background picture
     backgroundTexture.loadFromFile("background.png");
     backgroundSprite.setTexture(backgroundTexture);
 
-    // Foreground
+    // loading foreground pictures
     foregroundTexture.loadFromFile("foreground.png");
     foregroundSprite.setTexture(foregroundTexture);
     foregroundSprite.setPosition(0, window.getSize().y - 350);
 
-
-    // Title
+    // creatnig the title text using font (hanoi.ttf)
     font.loadFromFile("hanoi.ttf");
     title.setFont(font);
     title.setCharacterSize(190);
@@ -50,7 +49,7 @@ towerOfHanoi::towerOfHanoi()
     title.setFillColor(Color::White);
     title.setPosition(window.getSize().x / 2 - title.getGlobalBounds().width / 2, window.getSize().y / 10);
 
-    // Prompt for enter
+    // Text prompt for "enter"
     askEnter.setFont(font);
     askEnter.setCharacterSize(40);
     askEnter.setString("Press ENTER to start");
@@ -58,36 +57,32 @@ towerOfHanoi::towerOfHanoi()
     askEnter.setPosition(window.getSize().x / 2 - askEnter.getGlobalBounds().width / 2, window.getSize().y / 1.2);
 
     // Prompt for input text
-   
-        askInput[0].setFont(font);
-        askInput[0].setCharacterSize(50);
-        askInput[0].setFillColor(Color::White);
-        askInput[0].setPosition(window.getSize().x / 2 - title.getGlobalBounds().width / 4.9, window.getSize().y / 2.5 );
-   
+
+    askInput[0].setFont(font);
+    askInput[0].setCharacterSize(50);
+    askInput[0].setFillColor(Color::White);
+    askInput[0].setPosition(window.getSize().x / 2 - title.getGlobalBounds().width / 4.9, window.getSize().y / 2.5);
+    // text to ask for number of disks
     askInput[0].setString("Number of disks:");
-   
 
     // Prompt for confirmation
     askConfirm.setFont(font);
     askConfirm.setCharacterSize(70);
     askConfirm.setFillColor(Color::White);
-    askConfirm.setString("Please confirm: y / n");
     askConfirm.setPosition(window.getSize().x / 2 - askConfirm.getGlobalBounds().width / 2, window.getSize().y / 1.25);
 
-    // Default input strings (number of disks, starting rod, ending rod)
+    // Default number of disks
     inputStr[0] = "3";
-   
 
-    // Input text (number of disks, starting rod, ending rod)
-   
-        inputText[0].setFont(font);
-        inputText[0].setCharacterSize(50);
-        inputText[0].setString(inputStr[0]);
-        inputText[0].setFillColor(Color::White);
-        inputText[0].setPosition(window.getSize().x / 2 + 200, window.getSize().y / 2.5 );
-    
+    // Input text (number of disks)
 
-    // Move count
+    inputText[0].setFont(font);
+    inputText[0].setCharacterSize(50);
+    inputText[0].setString(inputStr[0]);
+    inputText[0].setFillColor(Color::White);
+    inputText[0].setPosition(window.getSize().x / 2 + 200, window.getSize().y / 2.5);
+
+    // counter for Moves
     userMoveCount.setFont(font);
     userMoveCount.setCharacterSize(100);
     userMoveCount.setString("0");
@@ -95,6 +90,7 @@ towerOfHanoi::towerOfHanoi()
     userMoveCount.setPosition(30, 1);
 
     // Ending message
+    // endmsg[0] is congrats , endmsg[1] is your moves, endsmg[2] is enter to resart
     for (int i = 0; i < 3; i++)
     {
         endMsg[i].setFont(font);
@@ -103,10 +99,10 @@ towerOfHanoi::towerOfHanoi()
     }
     endMsg[0].setString("Congratulations!");
 
-    // Focus box
+    // Focusbox is where the focus of change is
     focusBox.setFillColor(Color(255, 255, 255, 50));
 
-    // Focus box arrows
+    // focus box arrows pictures
     arrowTexture.loadFromFile("arrow.png");
     for (int i = 0; i < 2; i++)
     {
@@ -117,7 +113,7 @@ towerOfHanoi::towerOfHanoi()
     arrowSprite[0].setPosition(inputText[0].getPosition().x - 57.2, inputText[0].getPosition().y + 1);
     arrowSprite[1].setScale(-1, 0.93);
 }
-
+// destructor for the class
 towerOfHanoi::~towerOfHanoi()
 {
     if (rod)
@@ -143,7 +139,7 @@ void towerOfHanoi::run()
         while (window.pollEvent(event))
             (this->*processEvent[state])(event);
 
-        // Render window
+        // Window rendering
         window.clear();
         (this->*runState[state])();
         window.display();
@@ -154,7 +150,8 @@ void towerOfHanoi::createRods()
 {
     // initialize rods and fill with disks
     rod = new stack<int>[numRods];
-    for (int i = 0; i < numDisks; i++){
+    for (int i = 0; i < numDisks; i++)
+    {
         rod[startRod].push(i + 1);
     }
 }
@@ -164,14 +161,15 @@ void towerOfHanoi::solve()
     // initial loop
     startRodToEndRod();
     // reset the rods for next user input
-    while (!rod[endRod].empty()){
+    while (!rod[endRod].empty())
+    {
         rod[endRod].pop();
     }
-    for (int i = 0; i < numDisks; i++){
+    for (int i = 0; i < numDisks; i++)
+    {
         rod[startRod].push(i + 1);
     }
 }
-
 
 void towerOfHanoi::startRodToEndRod()
 {
@@ -181,7 +179,8 @@ void towerOfHanoi::startRodToEndRod()
     for (int currRod = 0; rod[endRod].size() != originalStartSize; currRod == numRods - 1 ? currRod = 0 : currRod++)
     {
         // if it is the remaining rod or invalid then skip it
-        if (isInvalidRod(currRod, prevDisk) || isAuxiliaryRod(currRod))continue;
+        if (isInvalidRod(currRod, prevDisk) || isAuxiliaryRod(currRod))
+            continue;
         // if number of disks is even then go left
         if ((rod[currRod].top() % 2))
         {
@@ -213,7 +212,7 @@ bool towerOfHanoi::isInvalidRod(int rodNum, int prevDisk)
 }
 
 bool towerOfHanoi::isAuxiliaryRod(int rodNum)
-{
+{ // check if rod is auxiliary or not
     for (int i = 0; (i < numRods - 3) && auxRod; i++)
         if (rodNum == auxRod[i])
             return true;
@@ -233,25 +232,26 @@ void towerOfHanoi::placeDisk(int beginRod, int endRod, bool solving)
 
 void towerOfHanoi::preGame()
 {
-    // Draw background, foreground
+    // Draw the background and foreground
     window.draw(backgroundSprite);
     window.draw(foregroundSprite);
-      
-        // Set position relative to focus
-        focusBox.setPosition(inputText[0].getPosition().x / 1.597 + askInput[0].getGlobalBounds().width / 0.84,
-            askInput[0].getGlobalBounds().top - askInput[0].getGlobalBounds().height / 2.5 + (focus * 100));
 
-        // Set size relative to width of input text being focused
-        focusBox.setSize(Vector2f(47 + inputText[focus].getGlobalBounds().width, 70));
+    // Set the position of the focus box relative to the focused input text
+    focusBox.setPosition(
+        inputText[0].getPosition().x / 1.597 + askInput[0].getGlobalBounds().width / 0.84,
+        askInput[0].getGlobalBounds().top - askInput[0].getGlobalBounds().height / 2.5 + (focus * 100));
 
-        // Set position of arrows relative to focus
-        arrowSprite[0].setPosition(arrowSprite[0].getPosition().x,
-            inputText[focus].getPosition().y + 1);
+    // Set the size of the focus box relative to the width of the focused input text
+    focusBox.setSize(Vector2f(47 + inputText[focus].getGlobalBounds().width, 70));
 
-        arrowSprite[1].setPosition(inputText[0].getPosition().x + inputText[focus].getGlobalBounds().width + 55.8,
-            inputText[focus].getPosition().y + 1);
-    
-   
+    // Set the position of arrows relative to the focused input text
+    arrowSprite[0].setPosition(arrowSprite[0].getPosition().x,
+                               inputText[focus].getPosition().y + 1);
+
+    arrowSprite[1].setPosition(
+        inputText[0].getPosition().x + inputText[focus].getGlobalBounds().width + 55.8,
+        inputText[focus].getPosition().y + 1);
+
     // Draw focus box and arrows
     window.draw(focusBox);
     for (int i = 0; i < 2 && focus < 2; i++)
@@ -260,60 +260,57 @@ void towerOfHanoi::preGame()
     // Draw title
     window.draw(title);
 
-    // Draw input text
-        window.draw(askInput[0]);
-        window.draw(inputText[0]);
-        window.draw(askEnter);
-    
+    // Draw input and prompt
+    window.draw(askInput[0]);
+    window.draw(inputText[0]);
+    window.draw(askEnter);
 }
 
 void towerOfHanoi::inGame()
 {
-    // Check for win condition
+    // Check win condition
     if (rod[endRod].size() == numDisks && !moveInProgress)
     {
+        // Set end message and enter post-game state
         setEndMessage();
         state = POST_GAME;
     }
 
-    // Disk animation
+    // Handle disk animation if a move is in progress
     if (moveInProgress)
         moveDisk();
 
-    // Draw background 
+    // Draw background
     window.draw(backgroundSprite);
 
-    // Draw disks
+    // draw disks
     for (int i = 0; i < numDisks; i++)
         window.draw(diskSprite[i]);
 
-    // Draw foreground 
+    // draw foreground
     window.draw(foregroundSprite);
 
-
-    // Draw move count
+    // draw move counter
     window.draw(userMoveCount);
 }
 
 void towerOfHanoi::postGame()
 {
-
-    // Draw background 
+    // draw background
     window.draw(backgroundSprite);
 
-    // Draw disks
+    // draw disks
     for (int i = 0; i < numDisks; i++)
         window.draw(diskSprite[i]);
 
-    // Draw foreground 
+    // draw foreground
     window.draw(foregroundSprite);
 
-
-    // Draw end message
-    for (int i = 0; i < 3; i++)
+    // draw end messages
+    for (int i = 0; i < 2; i++)
         window.draw(endMsg[i]);
 
-    // Prompt for enter
+    // Prompt for enter to restart
     window.draw(askEnter);
 }
 
@@ -330,19 +327,19 @@ void towerOfHanoi::preGameEvent(Event event)
             cout.flush();
             break;
 
-            // Decrement focused value
+            // Decrement focused value (number of disks)
         case Keyboard::Left:
             decrementInput(focus);
             break;
 
-            // Increment focused value 
-        case Keyboard::Right:       
+            // Increment focused value (number of disks)
+        case Keyboard::Right:
             incrementInput(focus);
             break;
 
             // Set the board and proceed to ingame
         case Keyboard::Return:
-            if (focus == 2 )
+            if (focus == 2)
             {
                 focus = 0;
                 return;
@@ -352,69 +349,60 @@ void towerOfHanoi::preGameEvent(Event event)
             numDisks = stoi(inputStr[0].toAnsiString());
             endRod = numRods - 1;
 
-         
-            // No errors! Proceed to game
+            // if no errors -> proceed
             createRods();
             solve();
             loadDiskSprites();
             state = IN_GAME;
             break;
 
-     
         default:
             break;
         }
     }
-
 }
 
 void towerOfHanoi::inGameEvent(Event event)
-{
-    // Keyboard
+{ // Handle keyboard events
     if (event.type == Event::KeyPressed)
-    {
+    { // Check the specific key that was pressed
         switch (event.key.code)
         {
-            // Quit
+        // Quit
         case Keyboard::Escape:
-            window.close();
-            cout.flush();
+            window.close(); // Close the game window
+            cout.flush();   // clear any pending output
             break;
 
-            // Trigger a move
+        // Trigger a move if the Space key is pressed
         case Keyboard::Space:
+            // Check if a move is not already in progress and if there are still disks to move
             if (!moveInProgress && rod[endRod].size() != numDisks)
             {
-                getNextInstruction();
-                moveInProgress = true;
-                moveClock.restart();
+                getNextInstruction();  // get next move instruction
+                moveInProgress = true; // Set the flag indicating a move is in progress
+                moveClock.restart();   // Restart clock to measure elapsed time for animation
             }
-            break;
-
-            default:
             break;
         }
     }
 }
 
 void towerOfHanoi::postGameEvent(Event event)
-{
-    // Keyboard
+{ // Handle keyboard events
     if (event.type == Event::KeyPressed)
     {
         switch (event.key.code)
         {
-            // Quit
+        // Quit
         case Keyboard::Escape:
             window.close();
             cout.flush();
             break;
 
-            // Returns to title screen
+        // Return to the title screen
         case Keyboard::Return:
-            clearSettings();
-            break;
-        default:
+            clearSettings(); // Clear game settings
             break;
         }
     }
@@ -428,28 +416,27 @@ void towerOfHanoi::loadDiskSprites()
     float multiplier = 0.5 / (float)numDisks;
     for (int i = 0; i < numDisks; i++)
     {
-        // Set the texture, iterating from 1-4 repeatedly
+        // Set the texture, iterating from textures 1-4 repeatedly
         diskSprite[i].setTexture(diskTexture[i % 4]);
 
         // Set the origin as the middle of the first disk's dimensions
         diskSprite[i].setOrigin(300, 88);
 
-        // Make the disks smaller in size for each disk made
+        // make disks smaller in size for each disk made to stack them
         diskSprite[i].setScale(1 - (i * multiplier), 1 - (i * multiplier));
         diskSprite[i].setScale(diskSprite[i].getScale().x * (3 / ((float)numRods)), diskSprite[i].getScale().y);
 
-        // Set the position of the disk onto the start rod
+        // position disks onto the start rod
         diskSprite[i].setPosition(posX(startRod), posY(startRod));
     }
 }
 
-
 void towerOfHanoi::incrementInput(int focus)
-{
+{ // this handles what happens when you press the right arrow which increase the number of disks here
     if (inputStr[focus].getSize())
     {
         int num = stoi(inputStr[0].toAnsiString());
-        if (num < 8) //max num allowed of disks
+        if (num < 8) // max num allowed of disks
         {
             num++;
             inputStr[focus] = to_string(num);
@@ -460,11 +447,11 @@ void towerOfHanoi::incrementInput(int focus)
 }
 
 void towerOfHanoi::decrementInput(int focus)
-{
+{ // this handles what happens when you press the left arrow which decreases the number of disks here
     if (inputStr[focus].getSize())
     {
         int num = stoi(inputStr[0].toAnsiString());
-        if (num > 1) //minimum allowed of disks
+        if (num > 1) // minimum allowed of disks
         {
             num--;
             inputStr[focus] = to_string(num);
@@ -486,28 +473,27 @@ void towerOfHanoi::setEndMessage()
     // Set position
     for (int i = 0; i < 3; i++)
         endMsg[i].setPosition(window.getSize().x / 2 - endMsg[i].getGlobalBounds().width / 2, window.getSize().y / 4 + (i * 100));
-
 }
 
 void towerOfHanoi::moveDisk()
-{ //animation
+{ // animation for moving a disk
     // Pick up
     if (moveClock.getElapsedTime() < milliseconds(30))
     {
-        // Move disk upwards
+        // Move the disk upwards
         diskSprite[instruction.first - 1].move(0, -5);
     }
 
-    // Done
+    // Done moving
     else if (moveClock.getElapsedTime() >= moveTime)
     {
-        // Set disk to designated end position
+        // Set the disk to end position
         diskSprite[instruction.first - 1].setPosition(posX(instruction.second), posY(instruction.second));
 
-        // Move finished
+        // Move is finished
         moveInProgress = false;
 
-        // Increment user move count
+        // Increment the user move counter
         incrementMoveCount();
         return;
     }
@@ -515,51 +501,55 @@ void towerOfHanoi::moveDisk()
     // Put down
     else if (moveClock.getElapsedTime() > milliseconds(30))
     {
-        // Move disk downwards
+        // Move the disk downwards
         diskSprite[instruction.first - 1].move(0, 5);
     }
 }
 
 void towerOfHanoi::getNextInstruction()
-{
+{ // check if there are more instructions and no move is already in progress
     if (!solveData.empty() && !moveInProgress)
     {
-        // Obtain next instruction in moveData
+        // get next instruction from the solveData queue
         instruction = solveData.front();
         solveData.pop();
 
-        // Apply instruction to game stack
+        // Apply instruction to the game state
         for (int beginRod = 0; beginRod < numRods; beginRod++)
-        {
+        { // Check if the top of the current rod matches the disk
             if (rod[beginRod].size() && rod[beginRod].top() == instruction.first)
-                placeDisk(beginRod, instruction.second);
+                placeDisk(beginRod, instruction.second); // Move the disk to the desired rod
         }
     }
 }
 
 int towerOfHanoi::posX(int rodNum)
-{
+{ // Calculate the X position of a given rod
     float xPos = diskSprite[0].getGlobalBounds().width / 2. + rodNum * (diskSprite[0].getGlobalBounds().width + (3 / (numRods * 0.05)) - pow(0.5, numRods));
+
+    // Calculate the farthest X position to determine the total width of all rods
     float xPosFarthest = ((numRods - 1) * (diskSprite[0].getGlobalBounds().width + (3 / (numRods * 0.05)) - pow(0.5, numRods)));
     xPosFarthest += diskSprite[0].getGlobalBounds().width;
-    float xDif = (window.getSize().x - xPosFarthest) / 2.;
-    xPos += xDif;
-    return xPos;
+
+    float xDif = (window.getSize().x - xPosFarthest) / 2.; // Calculate the difference between the window width and the total width of all rods
+
+    xPos += xDif; // Adjust the X position by adding the calculated difference
+
+    return static_cast<int>(xPos); // Convert and return as an integer
 }
 
 int towerOfHanoi::posY(int rodNum)
 {
-    // Default position (no disks)
+    // Default Y position (when there are no disks on the rod)
     int yPosition = 950;
 
-    // Find the heights of all disks in the rod and add to y position
+    // Find the heights of all disks in the rod and subtract from the default Y position
     stack<int> temp = rod[rodNum];
     for (int i = 0; i < rod[rodNum].size(); i++)
     {
         int disk = temp.top();
         temp.pop();
-        yPosition -= diskSprite[disk - 1].getGlobalBounds().height / 2.25;
-
+        yPosition -= static_cast<int>(diskSprite[disk - 1].getGlobalBounds().height / 2.25);
     }
     return yPosition;
 }

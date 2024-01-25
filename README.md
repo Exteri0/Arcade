@@ -111,8 +111,10 @@ Connect 4 is a two-player connection game in which the players first choose a co
 
 #### Implemented Algorithm
 
-The algorithm implemented is a recursive algorithm called Minimax of Time Complexity O(b^d) where b is the branching factor and d is the depth. <br>
+The algorithm implemented is a recursive algorithm called Minimax. <br>
+
 The algorithm explores all possible future game states, assigns scores to each state based on the evaluation function, and selects the move with the highest score for the AI.<br>
+
 The score is based on which possible combinations could lead to a larger number of consecutive similar colored discs.<br>
 The player we want to maximize, in this case is the computer, is given a positive score and the Human player is given a negative score.
 

@@ -76,14 +76,14 @@ int main() {
 
         sf::Texture texture;
         window.clear(background);
-        if (!texture.loadFromFile("image.gif"))
+        if (!texture.loadFromFile("bg2.gif"))
         {
             std::cout << "couldnt load image" << std::endl;
         }
         else{
             sf::Sprite spr;
             spr.setTexture(texture);
-            spr.setScale(sf::Vector2f(2.f, 2.f));
+            spr.setScale(sf::Vector2f(1.3f, 1.2f));
             window.draw(spr);
         }
 

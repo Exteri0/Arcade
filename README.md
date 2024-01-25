@@ -22,7 +22,7 @@ Written in C++ and SFML
 
 ### SFML
 
-After installing SFML:
+After installing SFML: <br>
 ![SFML](https://github.com/Exteri0/Arcade/blob/main/READMEAssets/SFML%20include%201.png)
 
 1. Add the include folder inside the SFML in the include section in c_cpp_properties.json

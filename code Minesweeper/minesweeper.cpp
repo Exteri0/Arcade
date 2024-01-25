@@ -10,7 +10,7 @@ int main()
     unsigned lag = 0;                                       // In order to allow the game regardless of frames per second
     chrono::time_point<chrono::steady_clock> previous_time; // another lag reduction method requires this variable.
     Event event;
-    RenderWindow gameWindow(VideoMode(cellSize * columns * screenResize, screenResize * (fontHeight + cellSize * columns)), "MinesweeperGame", Style::Close);
+    RenderWindow gameWindow(VideoMode(cellSize * columns * screenResize, screenResize * (fontHeight + cellSize * columns)), "MinesweeperGame", Style::Close); //initiate a window for the game, determine its dimensions
     gameWindow.setView(View(FloatRect(0, 0, cellSize * columns, fontHeight + cellSize * rows)));
     minesweeperField gameObj;
     previous_time = chrono::steady_clock::now();

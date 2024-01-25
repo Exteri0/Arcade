@@ -43,7 +43,7 @@ void minesweeperField::draw(sf::RenderWindow &targetWindow)
     Sprite pictureSprite;
     Texture pictureTexture;
 
-    pictureTexture.loadFromFile("Icons16.png");
+    pictureTexture.loadFromFile("Icons16.png"); //used in junction with the screenresize variable, halfing the screen resize would require using icons8.png
 
     pictureSprite.setTexture(pictureTexture);
 
@@ -231,7 +231,7 @@ void minesweeperField::revealBoard(RenderWindow &targetWindow){
             if(!currCell->getOpen() &&!currCell->getFlag()){
                 currCell->reveal();
                 if(!currCell->checkMine()){
-                    cellBox.setFillColor(Color(131, 250, 248));
+                    cellBox.setFillColor(Color(131, 250, 248)); //color after revealing a safe cell
                     unsigned char mineCount = currCell->getMineCount();
                     targetWindow.draw(cellBox);
 
@@ -252,7 +252,7 @@ void minesweeperField::revealBoard(RenderWindow &targetWindow){
             else if(!currCell->getFlag()){
                 unsigned char mineCount = get_cell(a, b, cells)->getMineCount();
                 if (!get_cell(a, b, cells)->checkMine()){
-                    cellBox.setFillColor(Color(200, 200, 200));
+                    cellBox.setFillColor(Color(200, 200, 200)); 
                 }
                 else{
                     cellBox.setFillColor(Color(0, 0, 0));
@@ -281,7 +281,9 @@ void minesweeperField::revealBoard(RenderWindow &targetWindow){
     }
 }
 
-void minesweeperField::drawAIBoard(RenderWindow &targetWindow){  
+void minesweeperField::drawAIBoard(RenderWindow &targetWindow){  //same jigg as the normal board drawing, each cell has an index (the start of the rectangular box)
+//cell color this time is all the same since all cells are revealed
+// numbers are now from 0 to 9
     RectangleShape cellBox(Vector2f(cellSize - 1, cellSize - 1));
     Sprite pictureSprite;
     Texture pictureTexture;
@@ -303,7 +305,7 @@ void minesweeperField::drawAIBoard(RenderWindow &targetWindow){
     }
 }
 
-pair<bool, pair<int,int>> minesweeperField:: checkForUnvisited(){
+pair<bool, pair<int,int>> minesweeperField:: checkForUnvisited(){ //find the first unvisited node by looping over all indices until an unvisited is found
     for (char a = 0; a < columns; a++){
         for (char b = 0; b < rows; b++){
             Cell *currCell = get_cell(a, b, cells);
@@ -315,7 +317,7 @@ pair<bool, pair<int,int>> minesweeperField:: checkForUnvisited(){
     return (make_pair(false, make_pair(0, 0)));
 }
 
-void minesweeperField::generateAIBoard(){
+void minesweeperField::generateAIBoard(){ //similiar to main board generation, without first click stuff
     for (char a = 0; a < columns; a++){
         for (char b = 0; b < rows; b++){
             get_cell(a, b, cells)->reset();
@@ -341,7 +343,7 @@ void minesweeperField::generateAIBoard(){
     copy(cells.begin(),cells.end(),back_inserter(cellsAIcpy));
 }
 
-bool minesweeperField::solutionOverAI(){
+bool minesweeperField::solutionOverAI(){ //check if the ai solution is done
     bool returnVal = true;
     for (char a = 0; a < columns; a++){
         for (char b = 0; b < rows; b++){
@@ -352,46 +354,46 @@ bool minesweeperField::solutionOverAI(){
     return returnVal;
 }
 
-bool minesweeperField::AISolve(){
+bool minesweeperField::AISolve(){ //solution algorithm
     
-    if(solutionOverAI())
+    if(solutionOverAI()) //if the solution over condition, return true for the specific state of cells
         return true;
     
-    pair<bool, pair<int, int>> unvisitedValue = checkForUnvisited();
+    pair<bool, pair<int, int>> unvisitedValue = checkForUnvisited(); //get the first unvisited node
     
-    if(!unvisitedValue.first)
+    if(!unvisitedValue.first) //all nodes are visited (this happened after we know the game is not finished) --> this state of cells doesnt satisfy
         return false;
     
     char xbegin = unvisitedValue.second.first;
     char ybegin = unvisitedValue.second.second;
     Cell *currCell = get_cell(xbegin, ybegin, cells);
-    currCell->visit();
+    currCell->visit(); //visit the current unvisited cell
 
     if(currCell->checkSafetyOfCell(cells)){
-        currCell->setSafetyOfCell();
-        if(AISolve())
-            return true;
+        currCell->setSafetyOfCell(); //cell can have a mine
+        if(AISolve()) //keep solving for the next unvisited cell
+            return true; // the assumption is correct, recruse back
     
-        currCell->setUnsafetyOfCell();
+        currCell->setUnsafetyOfCell(); //now assume the cell didnt have the mine
         for (char a = -1; a < 2; a++){
             for (char b = -1; b < 2; b++){
                 if(currCell->cellIndexDoesntExist(xbegin+a, ybegin+b))
                     continue;
                 
                 Cell *tempCell = get_cell(xbegin + a, ybegin + b, cells);
-                tempCell->increaseMineCountAI();
+                tempCell->increaseMineCountAI();//we reset the cell's neightbors numbers (they were changed in the assumption)
             }
         }
     }
         if(AISolve())
-            return true;
+            return true;// start solving on the new assumption that it doesnt have a mine
 
-        currCell->unvisit();
+        currCell->unvisit();//unvisit the cell in case later recursion calls need it
 
-        return false;
+        return false; // both scenarios didnt work, return false.
 }
 
-void minesweeperField::AIsolutionPRINTER(sf::RenderWindow &targetWindow){
+void minesweeperField::AIsolutionPRINTER(sf::RenderWindow &targetWindow){ //the function just recolors the boxes depending on whether they are mines or not
     if(AISolve()){
         RectangleShape cellBox(Vector2f(cellSize - 1, cellSize - 1));
         Sprite pictureSprite;

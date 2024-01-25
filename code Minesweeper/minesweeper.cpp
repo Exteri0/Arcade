@@ -20,7 +20,7 @@ int main()
 
     while (gameWindow.isOpen())
     {
-       //Lag Reduction.
+        // Lag Reduction.
         unsigned delta_time = chrono::duration_cast<chrono::microseconds>(chrono::steady_clock::now() - previous_time).count();
 
         lag += delta_time;
@@ -34,9 +34,9 @@ int main()
             xIndexMouse = clamp(static_cast<int>(floor(Mouse::getPosition(gameWindow).x / static_cast<float>(cellSize * screenResize))), 0, columns - 1);
             yIndexMouse = clamp(static_cast<int>(floor(Mouse::getPosition(gameWindow).y / static_cast<float>(cellSize * screenResize))), 0, rows - 1);
             lag -= frameTime;
-            while (gameWindow.pollEvent(event))
+            while (gameWindow.pollEvent(event)) // start taking actions from the user
             {
-                if (event.type == Event::Closed)
+                if (event.type == Event::Closed) // user wants to close the window
                 {
                     gameWindow.close();
                     break;
@@ -48,7 +48,7 @@ int main()
                         gameObj.restart();
                         gameAlreadyDone = false;
                     }
-                    else if (event.key.code == Keyboard::A)
+                    else if (event.key.code == Keyboard::A) // user presses A, starts A.I mode, user presses B, A.I solution begins, then C to close
                     {
                         AIMODE = true;
                         gameObj.restart();
@@ -68,22 +68,22 @@ int main()
                         gameWindow.close();
                     }
                 }
-                else if (event.type == Event::MouseButtonReleased)
+                else if (event.type == Event::MouseButtonReleased) // this is user clicking on a square on normal mode
                 {
                     switch (event.mouseButton.button)
                     {
                     case Mouse::Left:
                     {
-                        gameObj.openCell(xIndexMouse, yIndexMouse);
+                        gameObj.openCell(xIndexMouse, yIndexMouse); // the cell is opened on left click
                     }
                     case Mouse::Right:
                     {
-                        gameObj.flagCell(xIndexMouse, yIndexMouse);
+                        gameObj.flagCell(xIndexMouse, yIndexMouse); // the cell is flagged on right click
                     }
                     }
                 }
             }
-            if (Mouse::isButtonPressed(Mouse::Left) || Mouse::isButtonPressed(Mouse::Right))
+            if (Mouse::isButtonPressed(Mouse::Left) || Mouse::isButtonPressed(Mouse::Right)) // slightly change the color tone of the cell
             {
                 gameObj.setMouseState(2, xIndexMouse, yIndexMouse);
             }
@@ -91,32 +91,32 @@ int main()
             {
                 gameObj.setMouseState(1, xIndexMouse, yIndexMouse);
             }
-            if (frameTime > lag)
+            if (frameTime > lag) // the window is cleared to be redrawn on each frame
             {
                 gameWindow.clear();
 
                 if (!gameAlreadyDone)
-                    gameObj.draw(gameWindow);
+                    gameObj.draw(gameWindow); // the normal state, game isnt over
 
                 if (gameObj.endGame() == -1)
                 {
                     textDraw(0, 0, cellSize * rows, "You Lose!\t Mines Left: " + to_string(numMines - flagCount), gameWindow);
                     gameObj.revealBoard(gameWindow);
-                    gameAlreadyDone = true;
+                    gameAlreadyDone = true; // player lost state, game is over
                 }
                 else if (gameObj.endGame() == 1 && !gameAlreadyDone)
                 {
                     textDraw(0, 0, cellSize * rows, "You Win!\t Mines Left:" + to_string(numMines - flagCount), gameWindow);
-                    gameAlreadyDone = true;
+                    gameAlreadyDone = true; // player won state, game is over
                 }
                 // How many mines are left?
                 else
                 {
-                    textDraw(0, 0, cellSize * rows, "Mines:" + to_string(numMines - gameObj.getFlags()), gameWindow);
+                    textDraw(0, 0, cellSize * rows, "Mines:" + to_string(numMines - gameObj.getFlags()), gameWindow); // always show remaining number of mines
                 }
                 if (!AIMODE)
                 {
-                    gameWindow.display();
+                    gameWindow.display(); // draw the window
                 }
             }
         }

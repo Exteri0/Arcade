@@ -9,7 +9,7 @@ using namespace std;
 Cell *get_cell(unsigned short xInput, unsigned short yInput, std::vector<Cell> &cells);
 Cell *get_cell(unsigned short xInput, unsigned short yInput, std::vector<Cell> &cells)
 {
-    return &cells[xInput + columns * yInput];
+    return &cells[xInput + columns * yInput]; //mathemtical formula to get a 2d array index from a 1d array
 }
 
 Cell::Cell(unsigned char xInput, unsigned char yInput) : mined(0),
@@ -17,12 +17,12 @@ Cell::Cell(unsigned char xInput, unsigned char yInput) : mined(0),
                                                          yIndex(yInput),
                                                          revealed(0)
 {
-    reset();
+    reset(); //constructor of cell
 }
 
 bool Cell::cellIndexDoesntExist(char xInput, char yInput)
 {
-    return (0 > xInput || 0 > yInput || columns == xInput || rows == yInput);
+    return (0 > xInput || 0 > yInput || columns == xInput || rows == yInput); //check if a cell index is outside the board (0-based)
 }
 
 bool Cell::getFlag()
@@ -39,21 +39,23 @@ bool Cell::checkMine()
 
 bool Cell::getOpen()
 {
-    // Return whether the cell is open or not
+    // Return whether the cell is open or not.
     return opened;
 }
 
 bool Cell::checkVisited(){
+    //Returns whether the A.I.
     return visitedAI;
 }
 
 bool Cell::checkSafe(){
+    //Returns whether the cell could have a mine.
     return safeAI;
 }
 
 bool Cell::open(vector<Cell> &cells)
 {
-    //"You can't open a cell that's already open" - (c) Someone smart, I think
+    //"You can't open a cell that's already open or flagged"
     if (!opened && !flagged)
     {
         opened = true;
@@ -78,30 +80,28 @@ bool Cell::open(vector<Cell> &cells)
         }
         return mined;
     }
-
-    // Return the number between -2573 and 8752
     return 0;
 }
 
-unsigned char Cell::getMineCount()
+unsigned char Cell::getMineCount() //obvious getter
 {
     return count;
 }
 
-unsigned char Cell:: getMineCountAI(){
+unsigned char Cell:: getMineCountAI(){ //obvious getter mk. II
     return countAI;
 }
 
-unsigned char Cell::getMouseHover()
+unsigned char Cell::getMouseHover() //returns the state of the mouse related to cell (hovering over it or not)
 {
 
     return mouseHover;
 }
-bool Cell::getReveal(){
+bool Cell::getReveal(){ //checks if the cell is revealed or not (used after losing or in A.I Mode)
     return revealed;
 }
 
-void Cell::countMines(std::vector<Cell> &cells)
+void Cell::countMines(std::vector<Cell> &cells) //normal mode minecount
 {
     // We start counting from 0
     count = 0;
@@ -126,7 +126,7 @@ void Cell::countMines(std::vector<Cell> &cells)
     }
 }
 
-void Cell::countMinesAI(std::vector<Cell> &cells){
+void Cell::countMinesAI(std::vector<Cell> &cells){ //this is different from normal mode as it considers the cell itself in the count
     countAI = 0;
     for (char a  = -1; a < 2; a++){
         for (char b = -1; b < 2; b++){
@@ -140,16 +140,15 @@ void Cell::countMinesAI(std::vector<Cell> &cells){
     }
 }
 
-void Cell:: increaseMineCountAI(){
+void Cell:: increaseMineCountAI(){ //used in the solve function to reset the cell's minecount
     countAI++;
 }
 
 void Cell::flag()
 {
     // A wise man once said: "You can't flag a cell that's already open, because there's no point in that"
-    if (!opened && !flagged && flagCount < numMines)
+    if (!opened && !flagged && flagCount < numMines) //u cant put more flags than mines
     {
-        // I know I can write !is_flagged but I won't
         flagged = !flagged;
         flagCount++;
     }
@@ -160,18 +159,18 @@ void Cell::flag()
     }
 }
 
-void Cell::reveal(){
+void Cell::reveal(){//reveals cell (obvious)
     if(!revealed && !opened){
         revealed = true;
     }
 }
 
-void Cell::visit(){
+void Cell::visit(){ //visits cell in A.I solution (still obvious)
     visitedAI = true;
 }
 
 void Cell::reset()
-{
+{ //resets all data of cell (really obvious)
     flagged = 0;
     mined = 0;
     opened = 0;
@@ -183,15 +182,15 @@ void Cell::reset()
     mouseHover = 1;
 }
 
-void Cell::setSafetyOfCell(){
+void Cell::setSafetyOfCell(){ //makes the cell safe to have a mine during A.I solution
     safeAI = true;
 }
 
-void Cell::setUnsafetyOfCell(){
+void Cell::setUnsafetyOfCell(){ //makes it unsafe to have a mine
     safeAI = false;
 }
 
-void Cell::setMine()
+void Cell::setMine() //place a mine in the cell
 {
     mined = 1;
 }
@@ -201,11 +200,11 @@ void Cell::setMouseHover(unsigned char currMouseState)
     mouseHover = currMouseState;
 }
 
-void Cell::decreaseMineCountAI(){
+void Cell::decreaseMineCountAI(){ //lower the expected minecount (used in A.I solution)
     countAI--;
 }
 
-bool Cell:: checkSafetyOfCell(vector<Cell> &cells){
+bool Cell:: checkSafetyOfCell(vector<Cell> &cells){ //check if the cell can have a mine or not
     
     if(cellIndexDoesntExist(xIndex, yIndex)){
         return false;
@@ -225,12 +224,12 @@ bool Cell:: checkSafetyOfCell(vector<Cell> &cells){
             if(cellIndexDoesntExist(a+xIndex, b+yIndex)){
                 continue;
             }
-            get_cell(a + xIndex, b + yIndex, cells)->decreaseMineCountAI();
+            get_cell(a + xIndex, b + yIndex, cells)->decreaseMineCountAI(); //if it can, we assume it does and decrease the expected minecount of surrounding cells by one
         }
     }
     return true;
 }
 
 void Cell:: unvisit(){
-    visitedAI = false;
+    visitedAI = false; //unvisit the cell (many obvious comments here)
 }

@@ -92,7 +92,7 @@ bool victoryCheck(Tile *grid, int newTile)
     return false;
 }
 
-int dropLocation(Tile *grid, int column)
+int dropLocation(Tile *grid, int column) // Edits the grid and returns the first vertically free location.
 {
     int i = 6;
     do
@@ -105,37 +105,32 @@ int dropLocation(Tile *grid, int column)
     return -1;
 }
 
-int dropRandomLocation(Tile *grid)
+int dropRandomLocation(Tile *grid) // Used to pick a random column to insert, using dropLocation.
 {
-    int i = 6,column = rand()%8;
-    do
-    {
-        if (grid[column + 7*i] == NONE)
-            return column + 7*i;
-        i--;
-    } while (i >= 0);
-
-    return -1;
+    int i = 6,column = rand()%8; // Random number from 0-7
+    return dropLocation(grid, column);
 }
 
 
-int evaluation(int counter,bool isAI){
+int evaluation(int counter,bool isAI){ // Evaluation of the board.
     int score = 0;
-    if (isAI){
-        if (counter == 4)
+    // If we are evaluating AI then the score will be positive.
+    if (isAI){ 
+        if (counter == 4) // If there are 4 in a row the score is large as that is an immediate win
             score += 1000000;
         else if (counter == 3)
             score += 5;
         else if (counter == 2)
             score += 2;
     }
+    // If we are evaluating Player then the score will be in negative.
     else {
         if (counter == 4)
             score -= 1000000;
         else if (counter == 3)
             score -= 50;
     }
-    return score;
+    return score; // Returns final score
 }
 
 int evalPart(std::vector<Tile> arr,Tile color){
@@ -219,7 +214,7 @@ int scorepos(Tile *grid, Tile color){
     
     return score;
 }
-
+// Returns an array of all valid locations
 std::vector<int> getValidLocations(Tile *grid){
     std::vector<int> getValidLocations;
     for (int column =0;column < 7;column++){
@@ -228,7 +223,7 @@ std::vector<int> getValidLocations(Tile *grid){
     }
     return getValidLocations;
 }
-
+// Returns best move location for the current board 
 int getBestMove(Tile *grid,Tile color){
     std::vector<int> validLocations = getValidLocations(grid);
     int bestscore = -10000,bestloc = dropRandomLocation(grid);
@@ -245,17 +240,18 @@ int getBestMove(Tile *grid,Tile color){
     }
     return bestloc;
 }
-
+// This is the minimax algorithm which changes the board and then tries all valid plays for both player and AI to find the best option based on the score 
 std::pair<int,int> minimax(Tile *grid, int depth, Tile AI, bool maximizingPlayer,int moveCounter, int newTile){
-    std::vector<int> validLocations = getValidLocations(grid);
+    std::vector<int> validLocations = getValidLocations(grid); // Get all valid locations
     
-    if (victoryCheck(grid,newTile)){
+    if (victoryCheck(grid,newTile)){ // If won, drawn, or the depth is finished the function is stopped.
         if (grid[newTile] == AI) return {-1,1000000};
         else return {-1,-1000000};
     }    
     else if (moveCounter >= 49) return {-1,0};
     else if (depth == 0) return {-1,scorepos(grid,AI)};
 
+    // If you are maximizing this player - The AI's turn
     if (maximizingPlayer){
         int value = -1000000,bestloc = dropRandomLocation(grid);
 
@@ -273,6 +269,7 @@ std::pair<int,int> minimax(Tile *grid, int depth, Tile AI, bool maximizingPlayer
         return {bestloc,value};
     }
     else {
+        // You are trying to minimize this player - This is the player
         int value = 1000000,bestloc = dropRandomLocation(grid);
 
         for (auto &loc : validLocations){
@@ -299,7 +296,7 @@ int main()
     settings.antialiasingLevel = 8;
     sf::RenderWindow window(sf::VideoMode(800, 630), "Connect 4", sf::Style::Close, settings);
 
-    // This is importing the font  and checking if it is there or not
+    // This is importing the font and checking if it is there or not
 
     sf::Font font;
     if (!font.loadFromFile("andlso.ttf"))
@@ -464,22 +461,27 @@ int main()
             }
         }
 
-        ////////////////////////////////////
-
+        ////////////////////////////////////////////////////////////////////////////////////////
+        // This is the part that explains everything to do with the user and the computer playing
         if (tileDropped)
         {
             tileDropped = false;
+            // If the start is the computer then the computer enters here.
             if (column == -1){
+                // As it is the first move it is inimportant to look into the future, therefore we use getBestMove which only analysis the current board.
                 newTile = getBestMove(grid,static_cast<Tile>(2-currentRed));
                 grid[newTile] = static_cast<Tile>(2-currentRed);
                 prevtile = newTile;
                 currentRed = !currentRed;
                 moveCounter++;
             }
+            // This is the part where the program functions
             else {
+                //  We store the droplocation of player in newTile
                 newTile = dropLocation(grid, column);
                 if (newTile != -1)
                 {
+                    // Drops the tile and increments the move counter then checks if player won or not
                     grid[newTile] = static_cast<Tile>(2 - currentRed);
                     currentRed = !currentRed;
                     moveCounter++;
@@ -494,9 +496,10 @@ int main()
                         winner = grid[newTile];
                     }
                     else {
+                        // Delay for user experience
                         std::this_thread::sleep_until(std::chrono::system_clock::now() + std::chrono::milliseconds(300));
 
-                        //newTile = getBestMove(grid,static_cast<Tile>(2-currentRed));
+                        // Right after the user plays the computer's minimax function is entered 
                         newTile = minimax(grid,4,static_cast<Tile>(2-currentRed),1,moveCounter,prevtile).first;
                         grid[newTile] = static_cast<Tile>(2-currentRed);
                         currentRed = !currentRed;
